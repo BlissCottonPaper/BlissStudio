@@ -116,6 +116,11 @@
   .switch input:checked + .slider{background:var(--bliss-navy)}
   .switch input:checked + .slider::before{transform:translateX(20px)}
 
+  .qty{display:flex;align-items:center;max-width:170px}
+  .qty button{width:44px;height:44px;border:1px solid var(--bliss-border);background:var(--bliss-warm);font-size:1.35rem;line-height:1;cursor:pointer;color:var(--bliss-navy)}
+  .qty button:first-child{border-radius:9px 0 0 9px}
+  .qty button:last-child{border-radius:0 9px 9px 0}
+  .qty input{width:70px;text-align:center;border-radius:0;border-left:none;border-right:none;height:44px}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-serif);font-size:1.1rem;font-weight:600;border-radius:10px;padding:12px 22px;cursor:pointer;border:1px solid transparent;transition:.15s}
   .btn-primary{background:var(--bliss-navy);color:#fff} .btn-primary:hover{background:var(--bliss-navy-mid)}
   .btn-ghost{background:transparent;color:var(--bliss-navy);border-color:var(--bliss-border)} .btn-ghost:hover{border-color:var(--bliss-navy)}
@@ -275,6 +280,14 @@
           <h2>Print-ready download</h2>
           <p class="hint">A PDF at 300&nbsp;dpi. Bliss paper is handmade deckle-edge, so the file is sized to the sheet — no trimming, print edge to edge.</p>
           <div class="field"><label>File name</label><input type="text" id="fileName" placeholder="bliss-studio-card"></div>
+          <div class="field"><label>Quantity</label>
+            <div class="qty">
+              <button type="button" id="qtyMinus" aria-label="Fewer">−</button>
+              <input type="number" id="qtyInput" value="1" min="1" max="100">
+              <button type="button" id="qtyPlus" aria-label="More">+</button>
+            </div>
+            <p class="hint" id="qtyHint" style="margin-top:8px"></p>
+          </div>
           <div id="foldNote" class="note hidden"><strong>Folded card:</strong> <span id="foldInstruction"></span></div>
           <div class="field" style="margin-top:18px"><button class="btn btn-primary" id="downloadBtn" style="width:100%">Download print-ready PDF</button></div>
           <p class="hint" id="dlStatus" style="text-align:center"></p>
@@ -394,7 +407,7 @@ function blankFace(){ return { mode:'template', template:'blank', text:'', font:
 const state = {
   size:'5x7', orientation:'portrait', fold:'flat',
   paper:'Ivory', envelope:false, envColor:'Ivory',
-  fullBleed:false, activeSide:'front', moods:new Set(),
+  fullBleed:false, qty:1, activeSide:'front', moods:new Set(),
   faces:{ front:blankFace(), inside:blankFace() }
 };
 
@@ -596,6 +609,9 @@ function refreshAll(){
     : `${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}"`;
   $('#specLine').innerHTML=`${base} &nbsp;·&nbsp; ${state.fullBleed?'full bleed':'safe margin'} &nbsp;·&nbsp; ${DPI}&nbsp;dpi`;
 
+  const pp=(state.fold==='folded')?2:1, q=state.qty;
+  $('#qtyHint').textContent = `${q} card${q>1?'s':''} · ${q*pp} page${q*pp>1?'s':''} in the PDF`;
+
   $('#foldNote').classList.toggle('hidden',state.fold!=='folded');
   $('#foldInstruction').textContent = ps.axis==='v'
     ? ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on long edge), then fold down the middle like a book. Page 1 is the outside, page 2 the inside.`
@@ -617,6 +633,10 @@ $('#fullBleed').addEventListener('change',e=>{state.fullBleed=e.target.checked;r
 $('#bgRemove').addEventListener('change',()=>{applyBg();refreshAll();});
 $('#imgInput').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const img=new Image();img.onload=()=>{const f=face();f.rawImage=img;f.mode='upload';applyBg();refreshAll();};img.src=URL.createObjectURL(file);});
 $('#copyHex').addEventListener('click',()=>{const hex=paperHex().toUpperCase();navigator.clipboard&&navigator.clipboard.writeText(hex);toast('Copied '+hex+' — paste into the Shopify variant swatch');});
+function setQty(v){v=parseInt(v,10);if(isNaN(v))v=1;state.qty=Math.max(1,Math.min(100,v));$('#qtyInput').value=state.qty;refreshAll();}
+$('#qtyInput').addEventListener('input',e=>setQty(e.target.value));
+$('#qtyMinus').addEventListener('click',()=>setQty(state.qty-1));
+$('#qtyPlus').addEventListener('click',()=>setQty(state.qty+1));
 
 /* ---------- export ---------- */
 function renderSheet(pageW,pageH,panels){
@@ -643,12 +663,17 @@ async function exportPDF(){
     pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.front,x:0,y:fh,w:fw,h:fh,side:'front'}])});
     pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:0,y:fh,w:fw,h:fh,side:'inside'}])});
   }
-  const first=pages[0];
+  pages.forEach(p=>p.url=p.canvas.toDataURL('image/png')); // render each page once, reuse for copies
+  const first=pages[0], copies=state.qty||1;
   const pdf=new jsPDF({unit:'in',format:[first.w,first.h],orientation:first.w>first.h?'landscape':'portrait'});
-  pages.forEach((pg,i)=>{if(i>0)pdf.addPage([pg.w,pg.h],pg.w>pg.h?'landscape':'portrait');
-    pdf.addImage(pg.canvas.toDataURL('image/png'),'PNG',0,0,pg.w,pg.h,undefined,'FAST');});
+  let added=false;
+  for(let c=0;c<copies;c++){ for(const pg of pages){
+    if(added) pdf.addPage([pg.w,pg.h],pg.w>pg.h?'landscape':'portrait');
+    pdf.addImage(pg.url,'PNG',0,0,pg.w,pg.h,undefined,'FAST'); added=true; } }
   const name=slug($('#fileName').value||'bliss-studio-card');pdf.save(name+'.pdf');
-  status.textContent='Downloaded '+name+'.pdf';toast('Print-ready PDF downloaded');
+  const cards=copies, totPages=copies*pages.length;
+  status.textContent=`Downloaded ${name}.pdf — ${cards} card${cards>1?'s':''}, ${totPages} page${totPages>1?'s':''}`;
+  toast('Print-ready PDF downloaded');
 }
 $('#downloadBtn').addEventListener('click',()=>{exportPDF().catch(err=>{console.error(err);$('#dlStatus').textContent='Something went wrong rendering the PDF.';});});
 
