@@ -5,7 +5,7 @@ compatibility_date = "2026-01-01"
 # Public vars (safe to commit)
 [vars]
 SHOP = "1dsg0h-yf.myshopify.com"          # Bliss Cotton Paper .myshopify domain
-ALLOWED_ORIGIN = "https://studio.blisscottonpaper.com"
+ALLOWED_ORIGIN = "https://blisscottonpaper.com,https://studio.blisscottonpaper.com"  # Shopify page + Pages dev
 API_VERSION = "2025-07"                    # pin to a version the store supports; bump if needed
 
 # Secrets are NOT stored here. Set them once with:

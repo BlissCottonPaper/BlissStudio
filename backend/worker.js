@@ -159,17 +159,21 @@ async function createDraftOrder(env, token, cfg, designUrl) {
   return data.draftOrderCreate.draftOrder;
 }
 
-function corsHeaders(env) {
+function corsHeaders(req, env) {
+  const allowed = (env.ALLOWED_ORIGIN || '*').split(',').map((s) => s.trim());
+  const origin = req.headers.get('Origin') || '';
+  const allow = allowed.includes('*') ? '*' : (allowed.includes(origin) ? origin : allowed[0]);
   return {
-    'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN || '*',
+    'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Vary': 'Origin',
   };
 }
 
 export default {
   async fetch(req, env) {
-    const h = corsHeaders(env);
+    const h = corsHeaders(req, env);
     if (req.method === 'OPTIONS') return new Response(null, { headers: h });
     const url = new URL(req.url);
 
