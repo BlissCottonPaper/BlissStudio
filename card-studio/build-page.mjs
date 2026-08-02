@@ -36,7 +36,9 @@ fs.writeFileSync(DIR+'card-studio.css',cssOut);
 const jsOut=`"use strict";\ndocument.getElementById('card-studio').innerHTML=${JSON.stringify(wrapHtml+'\n'+toastStr)};\n${toolScript}\n`;
 fs.writeFileSync(DIR+'card-studio.js',jsOut);
 
-const pageBody=`<div id="card-studio"></div>
+const INTRO=`<p style="max-width:660px;margin:0 auto 16px;color:#3a5265;line-height:1.6;">Design a custom card on real Bliss cotton paper &mdash; choose your size, paper color, and your own words or uploaded artwork, then order it printed and shipped, or download a print-ready 300&nbsp;DPI PDF. Flat or folded, with a matching envelope if you like.</p>`;
+const pageBody=`${INTRO}
+<div id="card-studio"></div>
 <link rel="stylesheet" href="${ASSET_BASE}card-studio.css">
 <script src="${JSPDF}" defer></script>
 <script src="${ASSET_BASE}card-studio.js" defer></script>`;
