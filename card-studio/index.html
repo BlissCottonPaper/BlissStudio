@@ -407,6 +407,15 @@ function inkColor(hex){return isDark(hex)?'#f4ecdd':'#14283c';}
 function slug(s){return (s||'bliss-studio-card').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'bliss-studio-card';}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 function face(){return state.faces[state.activeSide];}
+// Does a face actually carry content? Drives single- vs double-sided folded pricing/print.
+function faceHasContent(f,side){
+  if(f.mode==='upload') return !!f.image;
+  if(f.mode==='text') return !!(f.text && f.text.trim());
+  const set=tmplSet(side), t=set.find(x=>x.id===f.template)||set[0];
+  return !!(t.main && t.main.trim());
+}
+// Billing helper (for the coming checkout): sides printed = rate multiplier.
+function printSides(){ return (state.fold==='folded' && faceHasContent(state.faces.inside,'inside')) ? 2 : 1; }
 
 /* Finished (closed) card dims in the chosen orientation. */
 function finishedDims(){const s=SIZES[state.size];return state.orientation==='portrait'?{w:s.w,h:s.h}:{w:s.h,h:s.w};}
@@ -590,16 +599,20 @@ function refreshAll(){
   if(state.envelope) renderEnvelope($('#cvEnv'));
 
   const s=SIZES[state.size], d=finishedDims(), ps=printSheet();
+  const dbl = state.fold==='folded' && faceHasContent(state.faces.inside,'inside');
   $('#previewSpec').textContent=`${s.label} · ${state.fold} · ${state.orientation} · ${state.paper}${state.envelope?' + '+state.envColor+' envelope':''}`;
+  const sides = state.fold==='folded' ? (dbl?' · double-sided':' · single-sided (blank inside)') : '';
   const base = state.fold==='folded'
-    ? `Folds to ${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}" · prints on ${s.foldSheet}`
+    ? `Folds to ${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}" · prints on ${s.foldSheet}${sides}`
     : `${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}"`;
   $('#specLine').innerHTML=`${base} &nbsp;·&nbsp; ${state.fullBleed?'full bleed':'safe margin'} &nbsp;·&nbsp; ${DPI}&nbsp;dpi`;
 
   $('#foldNote').classList.toggle('hidden',state.fold!=='folded');
-  $('#foldInstruction').textContent = ps.axis==='v'
-    ? ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on long edge), then fold down the middle like a book. Page 1 is the outside, page 2 the inside.`
-    : ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on short edge), then fold across the middle. Page 1 is the outside, page 2 the inside.`;
+  $('#foldInstruction').textContent = !dbl
+    ? ` Prints on a ${s.foldSheet} sheet. Inside is blank, so it prints single-sided — just fold and handwrite the inside.`
+    : (ps.axis==='v'
+      ? ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on long edge), then fold down the middle like a book. Page 1 is the outside, page 2 the inside.`
+      : ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on short edge), then fold across the middle. Page 1 is the outside, page 2 the inside.`);
 }
 
 /* ---------- navigation + events ---------- */
@@ -631,17 +644,18 @@ function renderSheet(pageW,pageH,panels){
 async function exportPDF(){
   const {jsPDF}=window.jspdf;const d=finishedDims();const ps=printSheet();
   const status=$('#dlStatus');status.textContent='Rendering…';await document.fonts.ready;
+  const dbl = faceHasContent(state.faces.inside,'inside'); // 2nd page only if the inside has content
   const pages=[];
   if(state.fold!=='folded'){
     pages.push({w:d.w,h:d.h,canvas:renderSheet(d.w,d.h,[{face:state.faces.front,x:0,y:0,w:d.w,h:d.h,side:'front'}])});
   } else if(ps.axis==='v'){ // book fold: sheet [2w, h]; content on the right panel
     const fw=d.w,fh=d.h;
     pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.front,x:fw,y:0,w:fw,h:fh,side:'front'}])});
-    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:fw,y:0,w:fw,h:fh,side:'inside'}])});
+    if(dbl) pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:fw,y:0,w:fw,h:fh,side:'inside'}])});
   } else { // top fold: sheet [w, 2h]; content on the bottom panel
     const fw=d.w,fh=d.h;
     pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.front,x:0,y:fh,w:fw,h:fh,side:'front'}])});
-    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:0,y:fh,w:fw,h:fh,side:'inside'}])});
+    if(dbl) pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:0,y:fh,w:fw,h:fh,side:'inside'}])});
   }
   const first=pages[0];
   const pdf=new jsPDF({unit:'in',format:[first.w,first.h],orientation:first.w>first.h?'landscape':'portrait'});
