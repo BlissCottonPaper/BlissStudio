@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Card Studio · Bliss Studio</title>
 <meta name="description" content="Design a card on Bliss cotton paper and download a print-ready file. A free tool from Bliss Cotton Paper + Print.">
-<link rel="icon" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068">
+<link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068">
 
-<!-- Site fonts (Cormorant Garamond + Assistant) + the Envelope Studio font set, so Card Studio matches it. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Great+Vibes&family=EB+Garamond:wght@400;600&family=Playfair+Display:wght@400;700&family=Source+Sans+3&family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400&family=Pinyon+Script&family=Cinzel:wght@400;600&family=Parisienne&family=Lora&family=Libre+Baskerville&family=Judson&family=Alex+Brush&family=Josefin+Sans&family=Marcellus&family=Karla&family=Allura&family=Tangerine:wght@400;700&family=Crimson+Text&family=Italiana&family=Cormorant:wght@300;400;500&family=Sacramento&family=Cormorant+Upright&family=Petit+Formal+Script&family=Libre+Caslon+Text&family=Julius+Sans+One&family=Mrs+Saint+Delafield&family=Merriweather&family=Bodoni+Moda&family=Rouge+Script&family=Spectral:wght@300;400&family=Cardo&family=Herr+Von+Muellerhoff&family=Quattrocento&family=Monsieur+La+Doulaise&family=Luxurious+Script&family=Ballet&family=Water+Brush&family=Quintessential&family=Italianno&family=Fraunces:opsz,wght@9..144,300..600&family=Instrument+Serif&family=Bricolage+Grotesque&family=WindSong&family=Prata&family=DM+Serif+Display&family=Yellowtail&family=Zilla+Slab&family=Amatic+SC&family=Homemade+Apple&family=Caveat&family=Send+Flowers&family=Norican&family=Antic+Didone&family=Berkshire+Swash&family=Gilda+Display&family=Mrs+Sheppards&family=IM+Fell+English&family=Poiret+One&family=Limelight&display=swap" rel="stylesheet">
@@ -64,11 +63,14 @@
   .chip small{display:block;color:var(--bliss-text-mid);font-size:.78rem;margin-top:2px}
   .chip:hover{border-color:var(--bliss-navy-mid)}
   .chip.sel{border-color:var(--bliss-navy);background:#fff;box-shadow:0 0 0 2px rgba(20,40,60,.12)}
+  .toggle2{display:flex;gap:10px}
+  .toggle2 .chip{flex:1;text-align:center}
 
   .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
   .swatch{border:1px solid var(--bliss-border);border-radius:10px;padding:8px;cursor:pointer;background:#fff;transition:.15s;text-align:center}
   .swatch:hover{border-color:var(--bliss-navy-mid)}
   .swatch.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
+  .swatch.off{opacity:.34;cursor:not-allowed;filter:grayscale(.4)}
   .swatch .dot{height:44px;border-radius:7px;border:1px solid rgba(0,0,0,.08);margin-bottom:6px}
   .swatch .nm{font-size:.78rem;color:var(--bliss-text);line-height:1.2}
 
@@ -81,7 +83,6 @@
   textarea,input[type=text],select{width:100%;font-family:var(--font-sans);font-size:.98rem;color:var(--bliss-text);border:1px solid var(--bliss-border);border-radius:9px;padding:10px 12px;background:#fff}
   textarea{min-height:92px;resize:vertical;line-height:1.4}
 
-  /* mood filter + font grid (mirrors Envelope Studio) */
   .mood-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
   .mood-chip{border:1px solid var(--bliss-border);background:var(--bliss-warm);border-radius:99px;padding:5px 13px;font-size:.82rem;cursor:pointer;color:var(--bliss-text-mid);transition:.15s}
   .mood-chip:hover{border-color:var(--bliss-navy-mid)}
@@ -95,20 +96,19 @@
   .font-opt .meta{font-family:var(--font-sans);font-size:.72rem;color:var(--bliss-text-mid);margin-left:auto;text-align:right;white-space:nowrap}
   .font-empty{padding:16px;text-align:center;color:var(--bliss-text-mid);font-size:.86rem}
 
-  .tmpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .tmpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
   .tmpl{border:1px solid var(--bliss-border);border-radius:10px;cursor:pointer;background:#fff;overflow:hidden;transition:.15s}
   .tmpl:hover{border-color:var(--bliss-navy-mid)}
   .tmpl.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
-  .tmpl .thumb{height:82px;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px;background:var(--bliss-ivory);color:var(--bliss-navy);line-height:1.15}
-  .tmpl .tnm{font-size:.78rem;padding:6px 8px;color:var(--bliss-text-mid);text-align:center}
+  .tmpl canvas{display:block;width:100%;height:96px;background:var(--bliss-ivory)}
+  .tmpl .tnm{font-size:.78rem;padding:6px 8px;color:var(--bliss-text-mid);text-align:center;border-top:1px solid var(--bliss-border)}
 
   .side-toggle{display:flex;gap:8px;margin-bottom:16px}
   .side-toggle button{flex:1;border:1px solid var(--bliss-border);background:var(--bliss-warm);border-radius:9px;padding:10px;cursor:pointer;font-family:var(--font-serif);font-size:1.05rem;color:var(--bliss-text-mid)}
   .side-toggle button.sel{background:#fff;border-color:var(--bliss-navy);color:var(--bliss-navy)}
 
-  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--bliss-border);margin-top:8px}
-  .switch-row .lbl{font-size:.92rem;color:var(--bliss-text)}
-  .switch-row .lbl small{display:block;color:var(--bliss-text-mid);font-size:.78rem}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0}
+  .switch-row .lbl{font-size:.92rem;color:var(--bliss-text)} .switch-row .lbl small{display:block;color:var(--bliss-text-mid);font-size:.78rem}
   .switch{position:relative;width:44px;height:24px;flex:0 0 auto}
   .switch input{opacity:0;width:0;height:0}
   .slider{position:absolute;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s;cursor:pointer}
@@ -119,7 +119,6 @@
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-serif);font-size:1.1rem;font-weight:600;border-radius:10px;padding:12px 22px;cursor:pointer;border:1px solid transparent;transition:.15s}
   .btn-primary{background:var(--bliss-navy);color:#fff} .btn-primary:hover{background:var(--bliss-navy-mid)}
   .btn-ghost{background:transparent;color:var(--bliss-navy);border-color:var(--bliss-border)} .btn-ghost:hover{border-color:var(--bliss-navy)}
-  .btn[disabled]{opacity:.5;cursor:not-allowed}
   .step-actions{display:flex;justify-content:space-between;gap:12px;margin-top:6px}
 
   .preview-col{position:sticky;top:18px}
@@ -144,7 +143,7 @@
     <img src="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068" alt="Bliss Cotton Paper + Print">
     <span class="studio">Bliss&nbsp;Studio</span>
   </a>
-  <nav><a href="/">Tools</a><a href="https://blisscottonpaper.com" target="_blank" rel="noopener">Shop</a></nav>
+  <nav><a href="/">Studio</a><a href="/card-studio/">Card Studio</a><a href="https://blisscottonpaper.com" target="_blank" rel="noopener">Shop</a></nav>
 </header>
 
 <div class="wrap">
@@ -165,24 +164,33 @@
       <section class="panel active" id="panel-0">
         <div class="card-block">
           <h2>Start with the paper</h2>
-          <p class="hint">Pick the Bliss paper you're printing on. Flat uses the whole sheet; folded creases it down the middle into a card half the size.</p>
+          <p class="hint">The size is your <em>finished</em> card. Folded cards print on a larger sheet that creases down to that size.</p>
 
           <div class="field">
-            <label>Paper &amp; format</label>
-            <div class="choices" id="sizeChoices"></div>
+            <label>Size <span style="text-transform:none;letter-spacing:0;font-weight:400">(finished)</span></label>
+            <div class="choices toggle2" id="sizeChoices"></div>
+          </div>
+
+          <div class="field">
+            <label>Format</label>
+            <div class="choices toggle2" id="foldChoices">
+              <button class="chip" data-fold="flat">Flat <small>single card</small></button>
+              <button class="chip" data-fold="folded">Folded <small>opens up</small></button>
+            </div>
           </div>
 
           <div class="field">
             <label>Orientation</label>
-            <div class="choices" id="orientChoices">
+            <div class="choices toggle2" id="orientChoices">
               <button class="chip" data-orient="portrait">Portrait <small>taller than wide</small></button>
               <button class="chip" data-orient="landscape">Landscape <small>wider than tall</small></button>
             </div>
           </div>
 
           <div class="field">
-            <label>Paper color <span style="text-transform:none;letter-spacing:0;font-weight:400">(11 in stock)</span></label>
+            <label>Paper color</label>
             <div class="swatches" id="paperSwatches"></div>
+            <div id="paperStockNote" class="note hidden"></div>
           </div>
         </div>
 
@@ -190,7 +198,7 @@
           <h2>Envelope</h2>
           <p class="hint">Add a matching envelope, or skip it.</p>
           <div class="field">
-            <div class="choices">
+            <div class="choices toggle2">
               <button class="chip sel" data-env="no">No envelope</button>
               <button class="chip" data-env="yes">Add an envelope</button>
             </div>
@@ -199,6 +207,7 @@
             <label>Envelope color <span style="text-transform:none;letter-spacing:0;font-weight:400">(20 in stock)</span></label>
             <div class="swatches" id="envSwatches"></div>
             <div id="envMatchNote" class="note hidden"></div>
+            <div id="envInkNote" class="note hidden"></div>
           </div>
         </div>
 
@@ -222,30 +231,24 @@
             <button data-mode="upload">Upload artwork</button>
           </div>
 
-          <div class="mode-body" id="mode-template">
-            <div class="tmpl-grid" id="tmplGrid"></div>
-          </div>
+          <div class="mode-body" id="mode-template"><div class="tmpl-grid" id="tmplGrid"></div></div>
 
           <div class="mode-body hidden" id="mode-text">
-            <div class="field">
-              <label>Your words</label>
-              <textarea id="textInput" placeholder="Write your message…"></textarea>
-            </div>
+            <div class="field"><label>Your words</label><textarea id="textInput" placeholder="Write your message…"></textarea></div>
             <div class="field">
               <label>Font</label>
-              <p class="font-note">Filter by mood — tap as many as you like. Fonts shown match all the moods you pick.</p>
+              <p class="font-note">Filter by mood — tap as many as you like. Fonts shown match all the moods you pick. Pulled from the Bliss Envelope Studio.</p>
               <div class="mood-row" id="moodRow"></div>
               <div class="font-groups" id="fontGroups"></div>
             </div>
           </div>
 
           <div class="mode-body hidden" id="mode-upload">
-            <div class="field">
-              <label>Upload a full-card graphic</label>
+            <div class="field"><label>Upload a full-card graphic</label>
               <input type="file" id="imgInput" accept="image/*">
               <p class="hint" style="margin-top:8px">Scaled to fill the card and centered. High-resolution files print best. Nothing leaves your browser.</p>
             </div>
-            <div class="switch-row">
+            <div class="switch-row" style="border-top:1px solid var(--bliss-border)">
               <div class="lbl">Remove background<small>Drops the white / corner background so the art sits on the paper.</small></div>
               <label class="switch"><input type="checkbox" id="bgRemove"><span class="slider"></span></label>
             </div>
@@ -254,7 +257,7 @@
 
         <div class="card-block">
           <h2>Finish</h2>
-          <div class="switch-row" style="border-top:none;padding-top:0">
+          <div class="switch-row">
             <div class="lbl">Full bleed<small>Runs color &amp; artwork off all four edges — no border on the deckle edge. Off keeps a safe margin.</small></div>
             <label class="switch"><input type="checkbox" id="fullBleed"><span class="slider"></span></label>
           </div>
@@ -270,22 +273,16 @@
       <section class="panel" id="panel-2">
         <div class="card-block">
           <h2>Print-ready download</h2>
-          <p class="hint">A PDF at 300&nbsp;dpi, exactly your paper size. Bliss paper is handmade deckle-edge, so the file is sized to the sheet — no trimming, print edge to edge.</p>
-          <div class="field">
-            <label>File name</label>
-            <input type="text" id="fileName" placeholder="bliss-card">
-          </div>
-          <div id="foldNote" class="note hidden"><strong>Folded card — how to print:</strong> <span id="foldInstruction"></span></div>
-          <div class="field" style="margin-top:18px">
-            <button class="btn btn-primary" id="downloadBtn" style="width:100%">Download print-ready PDF</button>
-          </div>
+          <p class="hint">A PDF at 300&nbsp;dpi. Bliss paper is handmade deckle-edge, so the file is sized to the sheet — no trimming, print edge to edge.</p>
+          <div class="field"><label>File name</label><input type="text" id="fileName" placeholder="bliss-studio-card"></div>
+          <div id="foldNote" class="note hidden"><strong>Folded card:</strong> <span id="foldInstruction"></span></div>
+          <div class="field" style="margin-top:18px"><button class="btn btn-primary" id="downloadBtn" style="width:100%">Download print-ready PDF</button></div>
           <p class="hint" id="dlStatus" style="text-align:center"></p>
         </div>
         <div class="step-actions"><button class="btn btn-ghost" data-goto="1">← Content</button><span></span></div>
       </section>
     </div>
 
-    <!-- PREVIEW -->
     <div class="preview-col">
       <div class="preview-box">
         <h3>Live preview</h3>
@@ -312,23 +309,25 @@
 "use strict";
 /* ============================================================================
    Card Studio v1 — Bliss Studio.  Client-side; canvas preview + jsPDF export.
-   Sizing model A (confirmed with Marc): the size = the flat Bliss sheet you own.
-   Flat = whole sheet. Folded = crease down the middle → a card half the size.
-   Handmade deckle paper is never trimmed, so the PDF is the exact sheet size
-   (no trim-bleed box); "full bleed" = print edge-to-edge.
+   SIZE = the finished/closed card. A folded card prints on a bigger sheet that
+   creases down to that size:
+     5×7 folded  → 7×10 sheet ;  A6 folded → A5 sheet ;  RSVP folded → 5×7 sheet.
+   Handmade deckle paper is never trimmed, so the PDF is the exact sheet size;
+   "full bleed" = print edge-to-edge.
    ========================================================================== */
 
-/* Flat trim sizes (portrait base) — confirmed against the live Shopify catalog. */
+/* Finished (closed) dims, portrait base [w,h], + the sheet a folded card prints on. */
 const SIZES = {
-  '5x7':  { label:'5 × 7',  sub:'5" × 7"',        w:5.0,  h:7.0,  env:'A7'   },
-  'A6':   { label:'A6',     sub:'4.25" × 6"',     w:4.25, h:6.0,  env:'A6'   },
-  'RSVP': { label:'RSVP',   sub:'3.25" × 4.75"',  w:3.25, h:4.75, env:'RSVP' }
+  '5x7':  { label:'5 × 7', w:5.0,  h:7.0,  foldSheet:'7×10' },
+  'A6':   { label:'A6',    w:4.75, h:6.5,  foldSheet:'A5'   },
+  'RSVP': { label:'RSVP',  w:3.25, h:4.75, foldSheet:'5×7'  }
 };
 
+/* Paper colors — Black removed (never printed on). */
 const PAPER_COLORS = [
   ['Ivory','#f4ecdd'], ['White','#fbfaf7'], ['Oat','#e6dcc6'], ['Pistachio','#d3ddba'],
   ['Light Sage','#cdd6c2'], ['Something Blue','#c3d0d8'], ['Blush Pink','#eccdcd'],
-  ['Coral Peach','#f0c6ad'], ['French Blue','#9fb2c4'], ['Beige','#e2d5bf'], ['Black','#211f1e']
+  ['Coral Peach','#f0c6ad'], ['French Blue','#9fb2c4'], ['Beige','#e2d5bf']
 ];
 const ENV_COLORS = [
   ['Ivory','#f4ecdd'], ['Something Blue','#c3d0d8'], ['Pistachio','#d3ddba'], ['Terracotta','#c07a54'],
@@ -338,8 +337,15 @@ const ENV_COLORS = [
   ['Smoky Blue','#8fa1ac'], ['Navy','#26384c'], ['Burgundy','#6d2f38'], ['Desert Sage','#b7bda6']
 ];
 const ENV_NAMES = ENV_COLORS.map(c=>c[0]);
+const ENV_DARK = ['Black','Navy','Burgundy','Brick Red'];
 
-/* Fonts + moods — the Envelope Studio set (display fonts + their themes). */
+/* Only Ivory & White are stocked in the larger 7×10 / A5 sheets. */
+function availablePaper(){
+  if(state.fold==='folded' && (state.size==='5x7'||state.size==='A6')) return ['Ivory','White'];
+  return PAPER_COLORS.map(c=>c[0]);
+}
+
+/* Envelope Studio font set (display fonts + moods). */
 const FONTS = [
   ['Ballet',['Whimsical','Botanical']],['Monsieur La Doulaise',['Vintage','Elegant']],
   ['Marcellus',['Minimalist','Sophisticated','Elegant']],['Herr Von Muellerhoff',['Vintage','Elegant']],
@@ -365,17 +371,22 @@ const FONTS = [
 ];
 const MOODS = ['Elegant','Vintage','Minimalist','Sophisticated','Whimsical','Boho','Botanical','Art Deco','Coastal'];
 
-const BASHO = 'Do not seek the wisdom\nof the ancients.\nSeek what they sought.';
-const TEMPLATES = [
-  { id:'blank',   name:'Blank',          text:'',                 font:'Cormorant Garamond' },
-  { id:'basho',   name:'Basho quote',    text:BASHO,              font:'Cormorant Garamond' },
-  { id:'thanks',  name:'Thank You',      text:'Thank You',        font:'Great Vibes' },
-  { id:'bday',    name:'Happy Birthday', text:'Happy\nBirthday',  font:'Caveat' },
-  { id:'congrats',name:'Congratulations',text:'Congratulations',  font:'Playfair Display' },
-  { id:'thinking',name:'Thinking of You',text:'Thinking\nof you', font:'Parisienne' },
-  { id:'hello',   name:'Hello',          text:'hello',            font:'Poiret One' },
-  { id:'sympathy',name:'With Sympathy',  text:'With\nSympathy',   font:'Libre Baskerville' }
+/* Templates — designed starting points (main + optional rule + small sub). */
+const FRONT_TEMPLATES = [
+  { id:'blank',    name:'Blank',           main:'',                 font:'Cormorant Garamond' },
+  { id:'thanks',   name:'Thank You',       main:'Thank you',        font:'Great Vibes',      sub:'WITH GRATITUDE', rule:true },
+  { id:'bday',     name:'Happy Birthday',  main:'Happy\nBirthday',  font:'Caveat',           sub:'MAKE A WISH',    rule:true },
+  { id:'congrats', name:'Congratulations', main:'Congratulations',  font:'Playfair Display', sub:'SO WELL DESERVED', rule:true },
+  { id:'sympathy', name:'With Sympathy',   main:'With Sympathy',    font:'Cormorant Garamond', sub:'THINKING OF YOU', rule:true },
+  { id:'thinking', name:'Thinking of You', main:'Thinking\nof you', font:'Parisienne' },
+  { id:'hello',    name:'Hello',           main:'hello',            font:'Poiret One',       sub:'JUST BECAUSE',   rule:true }
 ];
+const INSIDE_TEMPLATES = [
+  { id:'blank', name:'Blank',       main:'',              font:'Cormorant Garamond' },
+  { id:'love',  name:'With love',   main:'With love,',    font:'Great Vibes' },
+  { id:'warm',  name:'Warm wishes', main:'Warm wishes,',  font:'Cormorant Garamond' }
+];
+function tmplSet(side){ return side==='inside'?INSIDE_TEMPLATES:FRONT_TEMPLATES; }
 
 const DPI = 300;
 
@@ -393,61 +404,72 @@ function paperHex(){return hexOf(PAPER_COLORS,state.paper);}
 function envHex(){return hexOf(ENV_COLORS,state.envColor);}
 function isDark(hex){const c=hex.replace('#','');const r=parseInt(c.substr(0,2),16),g=parseInt(c.substr(2,2),16),b=parseInt(c.substr(4,2),16);return (0.299*r+0.587*g+0.114*b)<128;}
 function inkColor(hex){return isDark(hex)?'#f4ecdd':'#14283c';}
-function slug(s){return (s||'bliss-card').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'bliss-card';}
+function slug(s){return (s||'bliss-studio-card').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'bliss-studio-card';}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 function face(){return state.faces[state.activeSide];}
 
-// Sheet dims (inches) in current orientation.
-function sheetDims(){const s=SIZES[state.size];return state.orientation==='portrait'?{w:s.w,h:s.h}:{w:s.h,h:s.w};}
-// Fold geometry: crease halves the longer edge.
-function foldInfo(){
-  const {w,h}=sheetDims();
-  if(state.fold!=='folded') return {folded:false,fw:w,fh:h,axis:null};
-  return (h>=w) ? {folded:true,axis:'h',fw:w,fh:h/2}   // portrait sheet → top fold
-                : {folded:true,axis:'v',fw:w/2,fh:h};   // landscape sheet → side (book) fold
+/* Finished (closed) card dims in the chosen orientation. */
+function finishedDims(){const s=SIZES[state.size];return state.orientation==='portrait'?{w:s.w,h:s.h}:{w:s.h,h:s.w};}
+/* The print-file sheet. Flat = finished; folded = finished with one edge doubled. */
+function printSheet(){
+  const f=finishedDims();
+  if(state.fold!=='folded') return {w:f.w,h:f.h,axis:null};
+  return (f.h>=f.w) ? {w:f.w*2,h:f.h,axis:'v'}   // portrait finished → book (side) fold
+                    : {w:f.w,h:f.h*2,axis:'h'};   // landscape finished → top fold
 }
 
 /* ---------- drawing ---------- */
 function drawImageCover(ctx,img,x,y,w,h,overscan){
-  const o=overscan||0, X=x-w*o, Y=y-h*o, W=w*(1+2*o), H=h*(1+2*o);
-  const ir=img.width/img.height, cr=W/H; let dw,dh;
-  if(ir>cr){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}
-  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
-  ctx.drawImage(img,X+(W-dw)/2,Y+(H-dh)/2,dw,dh);ctx.restore();
+  const o=overscan||0,X=x-w*o,Y=y-h*o,W=w*(1+2*o),H=h*(1+2*o);
+  const ir=img.width/img.height,cr=W/H;let dw,dh; if(ir>cr){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}
+  ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.drawImage(img,X+(W-dw)/2,Y+(H-dh)/2,dw,dh);ctx.restore();
 }
-// Draw one finished card face into a w×h pixel box.
-function drawFace(ctx,x,y,w,h,f,paperHexVal){
-  ctx.save();
-  ctx.fillStyle=paperHexVal; ctx.fillRect(x,y,w,h);
+function drawSpaced(ctx,text,cx,cy,gap){
+  const chars=[...text];let total=0;for(const c of chars)total+=ctx.measureText(c).width+gap;total-=gap;
+  let px=cx-total/2;const prev=ctx.textAlign;ctx.textAlign='left';
+  for(const c of chars){const cw=ctx.measureText(c).width;ctx.fillText(c,px,cy);px+=cw+gap;}
+  ctx.textAlign=prev;
+}
+function drawComposed(ctx,x,y,w,h,tpl,ink){
+  const lines=(tpl.main||'').split('\n');
+  const frac=state.fullBleed?0.9:0.8, safeW=w*frac, safeH=h*(state.fullBleed?0.9:0.72);
+  let size=h*0.34; ctx.textAlign='center';ctx.textBaseline='middle';
+  for(;size>6;size--){ctx.font=`${size}px "${tpl.font}"`;let mw=0;for(const l of lines)mw=Math.max(mw,ctx.measureText(l).width);if(mw<=safeW && size*1.18*lines.length<=safeH)break;}
+  const lh=size*1.18, subSize=Math.max(9,size*0.24), ruleGap=tpl.rule?size*0.5:0, subGap=tpl.sub?subSize*2.4:0;
+  const blockH=lh*lines.length+ruleGap+subGap;
+  let cy=y+h/2-blockH/2+lh/2;
+  ctx.fillStyle=ink;ctx.font=`${size}px "${tpl.font}"`;
+  for(const l of lines){ctx.fillText(l,x+w/2,cy);cy+=lh;}
+  cy-=lh/2;
+  if(tpl.rule){cy+=ruleGap*0.5;const rw=Math.min(w*0.3,size*2.6);ctx.globalAlpha=.45;ctx.strokeStyle=ink;ctx.lineWidth=Math.max(1,size*0.018);ctx.beginPath();ctx.moveTo(x+w/2-rw/2,cy);ctx.lineTo(x+w/2+rw/2,cy);ctx.stroke();ctx.globalAlpha=1;cy+=ruleGap*0.5;}
+  if(tpl.sub){cy+=subGap*0.55;ctx.font=`${subSize}px "Assistant"`;ctx.fillStyle=ink;ctx.textBaseline='middle';drawSpaced(ctx,tpl.sub,x+w/2,cy,subSize*0.22);}
+}
+function tplFor(f,side){
+  if(f.mode==='template'){ const set=tmplSet(side); const t=set.find(x=>x.id===f.template)||set[0]; return {main:t.main,font:t.font,sub:t.sub,rule:t.rule}; }
+  return {main:f.text,font:f.font,sub:'',rule:false};
+}
+function drawFace(ctx,x,y,w,h,f,paperHexVal,side){
+  ctx.save();ctx.fillStyle=paperHexVal;ctx.fillRect(x,y,w,h);
   if(f.mode==='upload'&&f.image){
-    if(state.fullBleed){ drawImageCover(ctx,f.image,x,y,w,h,0.03); }
+    if(state.fullBleed) drawImageCover(ctx,f.image,x,y,w,h,0.03);
     else { const mx=w*0.07,my=h*0.07; drawImageCover(ctx,f.image,x+mx,y+my,w-2*mx,h-2*my,0); }
-    ctx.restore(); return;
+    ctx.restore();return;
   }
-  const text=(f.mode==='template')?((TEMPLATES.find(t=>t.id===f.template)||{}).text||''):f.text;
-  if(text.trim()) drawCenteredText(ctx,x,y,w,h,text,f.font||'Cormorant Garamond',inkColor(paperHexVal));
+  const tpl=tplFor(f,side);
+  if((tpl.main||'').trim()) drawComposed(ctx,x,y,w,h,tpl,inkColor(paperHexVal));
   ctx.restore();
 }
-function drawCenteredText(ctx,x,y,w,h,text,font,color){
-  const frac=state.fullBleed?0.9:0.8, safeW=w*frac, safeH=h*frac, lines=text.split('\n');
-  let size=h*0.5; ctx.textAlign='center'; ctx.textBaseline='middle';
-  for(;size>4;size-=1){ ctx.font=`${size}px "${font}"`;
-    let mw=0; for(const ln of lines) mw=Math.max(mw,ctx.measureText(ln).width);
-    if(mw<=safeW && size*1.22*lines.length<=safeH) break; }
-  ctx.fillStyle=color; const lh=size*1.22; let cy=y+h/2-(lh*lines.length)/2+lh/2;
-  for(const ln of lines){ ctx.fillText(ln,x+w/2,cy); cy+=lh; }
-}
 
-function renderPreviewCanvas(cv,f){
-  const fi=foldInfo(), w=fi.fw, h=fi.fh;
+function renderPreviewCanvas(cv,f,side){
+  const d=finishedDims(), w=d.w, h=d.h;                 // preview shows the finished/closed card
   const scale=Math.min(300/w,380/h), pw=Math.round(w*scale), ph=Math.round(h*scale), dpr=window.devicePixelRatio||1;
   cv.width=pw*dpr;cv.height=ph*dpr;cv.style.width=pw+'px';cv.style.height=ph+'px';
   const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,pw,ph);
-  drawFace(ctx,0,0,pw,ph,f,paperHex());
+  drawFace(ctx,0,0,pw,ph,f,paperHex(),side);
   ctx.strokeStyle='rgba(20,40,60,.10)';ctx.strokeRect(0.5,0.5,pw-1,ph-1);
 }
 function renderEnvelope(cv){
-  const s=SIZES[state.size]; const ew=Math.max(s.w,s.h)+0.35, eh=Math.min(s.w,s.h)+0.35;
+  const d=finishedDims(); const ew=Math.max(d.w,d.h)+0.35, eh=Math.min(d.w,d.h)+0.35;
   const scale=Math.min(300/ew,220/eh), pw=Math.round(ew*scale), ph=Math.round(eh*scale), dpr=window.devicePixelRatio||1;
   cv.width=pw*dpr;cv.height=ph*dpr;cv.style.width=pw+'px';cv.style.height=ph+'px';
   const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);const col=envHex();
@@ -456,44 +478,41 @@ function renderEnvelope(cv){
   ctx.fillStyle=isDark(col)?'rgba(255,255,255,.06)':'rgba(0,0,0,.05)';ctx.fill();ctx.stroke();
 }
 
-/* ---------- background removal (client-side; key = top-left / near-white) ---------- */
+/* ---------- background removal ---------- */
 function removeBg(img,tol){
   const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
   const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);
   const d=x.getImageData(0,0,c.width,c.height),p=d.data,kr=p[0],kg=p[1],kb=p[2];
-  for(let i=0;i<p.length;i+=4){
-    const r=p[i],g=p[i+1],b=p[i+2];
-    const near=(Math.abs(r-kr)+Math.abs(g-kg)+Math.abs(b-kb))<tol;
-    const white=(r>238&&g>238&&b>238);
-    if(near||white) p[i+3]=0;
-  }
+  for(let i=0;i<p.length;i+=4){const r=p[i],g=p[i+1],b=p[i+2];
+    if((Math.abs(r-kr)+Math.abs(g-kg)+Math.abs(b-kb))<tol || (r>238&&g>238&&b>238)) p[i+3]=0;}
   x.putImageData(d,0,0);return c;
 }
-function applyBg(){
-  const f=face(); if(!f.rawImage) return;
-  f.image = $('#bgRemove').checked ? removeBg(f.rawImage,100) : f.rawImage;
-}
+function applyBg(){const f=face();if(!f.rawImage)return;f.image=$('#bgRemove').checked?removeBg(f.rawImage,100):f.rawImage;}
 
-/* ---------- UI build ---------- */
+/* ---------- UI ---------- */
 function buildSizes(){
   const el=$('#sizeChoices');el.innerHTML='';
   for(const [key,s] of Object.entries(SIZES)){
-    for(const fold of ['flat','folded']){
-      const b=document.createElement('button');
-      b.className='chip'+(state.size===key&&state.fold===fold?' sel':'');
-      b.innerHTML=`${s.label} · ${fold==='flat'?'Flat':'Folded'}<small>${s.sub}</small>`;
-      b.onclick=()=>{state.size=key;state.fold=fold;refreshAll();};
-      el.appendChild(b);
-    }
+    const b=document.createElement('button');b.className='chip'+(state.size===key?' sel':'');
+    b.innerHTML=`${s.label}<small>${(+s.w)}" × ${(+s.h)}"</small>`;
+    b.onclick=()=>{state.size=key;ensurePaper();refreshAll();};el.appendChild(b);
   }
+  $$('#foldChoices .chip').forEach(c=>c.classList.toggle('sel',c.dataset.fold===state.fold));
+  $$('#orientChoices .chip').forEach(c=>c.classList.toggle('sel',c.dataset.orient===state.orientation));
 }
 function buildSwatches(){
-  const p=$('#paperSwatches');p.innerHTML='';
+  const avail=availablePaper(); const p=$('#paperSwatches');p.innerHTML='';
   for(const [name,hex] of PAPER_COLORS){
-    const d=document.createElement('button');d.className='swatch'+(state.paper===name?' sel':'');
+    const on=avail.includes(name);
+    const d=document.createElement('button');d.className='swatch'+(state.paper===name?' sel':'')+(on?'':' off');
     d.innerHTML=`<div class="dot" style="background:${hex}"></div><div class="nm">${name}</div>`;
-    d.onclick=()=>{state.paper=name;syncEnvMatch();refreshAll();};p.appendChild(d);
+    if(on) d.onclick=()=>{state.paper=name;syncEnvMatch();refreshAll();};
+    p.appendChild(d);
   }
+  const note=$('#paperStockNote');
+  if(avail.length<PAPER_COLORS.length){ note.classList.remove('hidden'); note.innerHTML=`Folded ${SIZES[state.size].label} prints on a larger <strong>${SIZES[state.size].foldSheet}</strong> sheet, which we stock only in <strong>Ivory &amp; White</strong>. Want another color? Choose Flat, or pick RSVP (folds from a 5×7 sheet, stocked in every color).`; }
+  else note.classList.add('hidden');
+
   const e=$('#envSwatches');e.innerHTML='';
   for(const [name,hex] of ENV_COLORS){
     const d=document.createElement('button');d.className='swatch'+(state.envColor===name?' sel':'');
@@ -501,34 +520,31 @@ function buildSwatches(){
     d.onclick=()=>{state.envColor=name;refreshAll();};e.appendChild(d);
   }
 }
+function ensurePaper(){ if(!availablePaper().includes(state.paper)){ state.paper='Ivory'; syncEnvMatch(); } }
 function buildMoods(){
   const row=$('#moodRow');row.innerHTML='';
   const all=document.createElement('button');all.className='mood-chip'+(state.moods.size===0?' sel':'');
   all.textContent='All';all.onclick=()=>{state.moods.clear();buildMoods();buildFonts();};row.appendChild(all);
-  for(const m of MOODS){
-    const b=document.createElement('button');b.className='mood-chip'+(state.moods.has(m)?' sel':'');
-    b.textContent=m;b.onclick=()=>{state.moods.has(m)?state.moods.delete(m):state.moods.add(m);buildMoods();buildFonts();};
-    row.appendChild(b);
-  }
+  for(const m of MOODS){const b=document.createElement('button');b.className='mood-chip'+(state.moods.has(m)?' sel':'');
+    b.textContent=m;b.onclick=()=>{state.moods.has(m)?state.moods.delete(m):state.moods.add(m);buildMoods();buildFonts();};row.appendChild(b);}
 }
 function buildFonts(){
-  const g=$('#fontGroups');g.innerHTML='';
-  const sel=[...state.moods];
-  const list=FONTS.filter(([n,th])=> sel.every(m=>th.includes(m)));
-  if(!list.length){ g.innerHTML='<div class="font-empty">No fonts match all those moods together. Drop a mood, or tap All.</div>'; return; }
-  for(const [n,th] of list){
-    const b=document.createElement('button');b.className='font-opt'+(face().font===n?' sel':'');
+  const g=$('#fontGroups');g.innerHTML='';const sel=[...state.moods];
+  const list=FONTS.filter(([n,th])=>sel.every(m=>th.includes(m)));
+  if(!list.length){g.innerHTML='<div class="font-empty">No fonts match all those moods together. Drop a mood, or tap All.</div>';return;}
+  for(const [n,th] of list){const b=document.createElement('button');b.className='font-opt'+(face().font===n?' sel':'');
     b.innerHTML=`<span class="samp" style="font-family:'${n}'">${n}</span><span class="meta">${th.join(' · ')}</span>`;
-    b.onclick=()=>{face().font=n;buildFonts();refreshAll();};g.appendChild(b);
-  }
+    b.onclick=()=>{face().font=n;buildFonts();refreshAll();};g.appendChild(b);}
 }
 function buildTemplates(){
-  const grid=$('#tmplGrid');grid.innerHTML='';
-  for(const t of TEMPLATES){
-    const d=document.createElement('button');d.className='tmpl'+(face().mode==='template'&&face().template===t.id?' sel':'');
-    const prev=t.text?t.text.replace(/\n/g,' '):'Blank';
-    d.innerHTML=`<div class="thumb" style="font-family:'${t.font}'">${prev}</div><div class="tnm">${t.name}</div>`;
-    d.onclick=()=>{const f=face();f.mode='template';f.template=t.id;f.font=t.font;f.text=t.text;f.image=null;f.rawImage=null;buildContent();refreshAll();};
+  const grid=$('#tmplGrid');grid.innerHTML='';const set=tmplSet(state.activeSide);const f=face();
+  for(const t of set){
+    const d=document.createElement('button');d.className='tmpl'+(f.mode==='template'&&f.template===t.id?' sel':'');
+    const cv=document.createElement('canvas');const dd=finishedDims();const ar=dd.w/dd.h;
+    const cw=150, ch=Math.round(cw/ar); cv.width=cw;cv.height=Math.min(96,ch)||96; cv.style.height='96px';
+    const ctx=cv.getContext('2d');drawFace(ctx,0,0,cv.width,cv.height,{mode:'template',template:t.id,font:t.font},paperHex(),state.activeSide);
+    d.appendChild(cv);const nm=document.createElement('div');nm.className='tnm';nm.textContent=t.name;d.appendChild(nm);
+    d.onclick=()=>{const ff=face();ff.mode='template';ff.template=t.id;ff.font=t.font;ff.text=t.main;ff.image=null;ff.rawImage=null;buildContent();refreshAll();};
     grid.appendChild(d);
   }
 }
@@ -550,10 +566,13 @@ function syncEnvMatch(){
 /* ---------- refresh ---------- */
 function refreshAll(){
   buildSizes();buildSwatches();
-  $$('#orientChoices .chip').forEach(c=>c.classList.toggle('sel',c.dataset.orient===state.orientation));
   $$('[data-env]').forEach(c=>c.classList.toggle('sel',(c.dataset.env==='yes')===state.envelope));
   $('#envColorField').classList.toggle('hidden',!state.envelope);
-  $('#bgRemove').checked = $('#bgRemove').checked; $('#fullBleed').checked=state.fullBleed;
+  $('#fullBleed').checked=state.fullBleed;
+
+  const ink=$('#envInkNote');
+  if(state.envelope && ENV_DARK.includes(state.envColor)){ ink.classList.remove('hidden'); ink.innerHTML=`Note: we print CMYK (no white ink), so a dark <strong>${state.envColor}</strong> envelope can't take a printed address legibly. Fine as a color choice — just not for printed-on text.`; }
+  else ink.classList.add('hidden');
 
   $('#sideToggle').classList.toggle('hidden',state.fold!=='folded');
   if(state.fold!=='folded') state.activeSide='front';
@@ -563,91 +582,79 @@ function refreshAll(){
     : 'Type your own words, upload artwork, or start from a template.';
   buildContent();
 
-  const fi=foldInfo();
-  renderPreviewCanvas($('#cvFront'),state.faces.front);
+  renderPreviewCanvas($('#cvFront'),state.faces.front,'front');
   $('#frontLabel').textContent=state.fold==='folded'?'Outside (cover)':'Card';
   $('#insideWrap').classList.toggle('hidden',state.fold!=='folded');
-  if(state.fold==='folded') renderPreviewCanvas($('#cvInside'),state.faces.inside);
+  if(state.fold==='folded') renderPreviewCanvas($('#cvInside'),state.faces.inside,'inside');
   $('#envWrap').classList.toggle('hidden',!state.envelope);
   if(state.envelope) renderEnvelope($('#cvEnv'));
 
-  const s=SIZES[state.size];
+  const s=SIZES[state.size], d=finishedDims(), ps=printSheet();
   $('#previewSpec').textContent=`${s.label} · ${state.fold} · ${state.orientation} · ${state.paper}${state.envelope?' + '+state.envColor+' envelope':''}`;
-  const fin = state.fold==='folded' ? `Folds to ${(+fi.fw.toFixed(2))}" × ${(+fi.fh.toFixed(2))}"` : `Flat ${(+fi.fw.toFixed(2))}" × ${(+fi.fh.toFixed(2))}"`;
-  $('#specLine').innerHTML = `${fin} &nbsp;·&nbsp; ${state.fullBleed?'full bleed':'safe margin'} &nbsp;·&nbsp; ${DPI}&nbsp;dpi${state.envelope?` &nbsp;·&nbsp; ${s.env} envelope`:''}`;
+  const base = state.fold==='folded'
+    ? `Folds to ${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}" · prints on ${s.foldSheet}`
+    : `${(+d.w.toFixed(2))}" × ${(+d.h.toFixed(2))}"`;
+  $('#specLine').innerHTML=`${base} &nbsp;·&nbsp; ${state.fullBleed?'full bleed':'safe margin'} &nbsp;·&nbsp; ${DPI}&nbsp;dpi`;
 
   $('#foldNote').classList.toggle('hidden',state.fold!=='folded');
-  $('#foldInstruction').textContent = fi.axis==='h'
-    ? ' Print double-sided (flip on short edge), then fold across the middle. Page 1 is the outside, page 2 the inside.'
-    : ' Print double-sided (flip on long edge), then fold down the middle like a book. Page 1 is the outside, page 2 the inside.';
+  $('#foldInstruction').textContent = ps.axis==='v'
+    ? ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on long edge), then fold down the middle like a book. Page 1 is the outside, page 2 the inside.`
+    : ` Prints on a ${s.foldSheet} sheet. Print double-sided (flip on short edge), then fold across the middle. Page 1 is the outside, page 2 the inside.`;
 }
 
-/* ---------- navigation ---------- */
-function goto(i){
-  $$('.panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+/* ---------- navigation + events ---------- */
+function goto(i){$$('.panel').forEach((p,idx)=>p.classList.toggle('active',idx===i));
   $$('.steps-nav button[data-goto]').forEach(b=>{const idx=+b.dataset.goto;b.classList.toggle('active',idx===i);b.classList.toggle('done',idx<i);});
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+  window.scrollTo({top:0,behavior:'smooth'});}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-goto]');if(g)goto(+g.dataset.goto);});
+$('#foldChoices').addEventListener('click',e=>{const b=e.target.closest('[data-fold]');if(b){state.fold=b.dataset.fold;ensurePaper();refreshAll();}});
 $('#orientChoices').addEventListener('click',e=>{const b=e.target.closest('[data-orient]');if(b){state.orientation=b.dataset.orient;refreshAll();}});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-env]');if(b){state.envelope=b.dataset.env==='yes';if(state.envelope)syncEnvMatch();refreshAll();}});
 $('#modeTabs').addEventListener('click',e=>{const b=e.target.closest('[data-mode]');if(b){face().mode=b.dataset.mode;buildContent();refreshAll();}});
 $('#sideToggle').addEventListener('click',e=>{const b=e.target.closest('[data-side]');if(b){state.activeSide=b.dataset.side;refreshAll();}});
-$('#textInput').addEventListener('input',e=>{face().text=e.target.value;renderPreviewCanvas(state.activeSide==='inside'?$('#cvInside'):$('#cvFront'),face());});
+$('#textInput').addEventListener('input',e=>{face().text=e.target.value;renderPreviewCanvas(state.activeSide==='inside'?$('#cvInside'):$('#cvFront'),face(),state.activeSide);});
 $('#fullBleed').addEventListener('change',e=>{state.fullBleed=e.target.checked;refreshAll();});
 $('#bgRemove').addEventListener('change',()=>{applyBg();refreshAll();});
-$('#imgInput').addEventListener('change',e=>{
-  const file=e.target.files[0];if(!file)return;
-  const img=new Image();img.onload=()=>{const f=face();f.rawImage=img;f.mode='upload';applyBg();refreshAll();};
-  img.src=URL.createObjectURL(file);
-});
-$('#copyHex').addEventListener('click',()=>{
-  const hex=paperHex().toUpperCase();
-  navigator.clipboard&&navigator.clipboard.writeText(hex);
-  toast('Copied '+hex+' — paste into the Shopify variant swatch');
-});
+$('#imgInput').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const img=new Image();img.onload=()=>{const f=face();f.rawImage=img;f.mode='upload';applyBg();refreshAll();};img.src=URL.createObjectURL(file);});
+$('#copyHex').addEventListener('click',()=>{const hex=paperHex().toUpperCase();navigator.clipboard&&navigator.clipboard.writeText(hex);toast('Copied '+hex+' — paste into the Shopify variant swatch');});
 
 /* ---------- export ---------- */
-// Render one flat sheet (page = exact sheet size, no trim bleed) at 300dpi.
 function renderSheet(pageW,pageH,panels){
   const cv=document.createElement('canvas');cv.width=Math.round(pageW*DPI);cv.height=Math.round(pageH*DPI);
   const ctx=cv.getContext('2d');ctx.fillStyle=paperHex();ctx.fillRect(0,0,cv.width,cv.height);
-  for(const p of panels){
-    const px=p.x*DPI,py=p.y*DPI,pw=p.w*DPI,ph=p.h*DPI;
-    ctx.save();
-    if(p.rotate){ ctx.translate(px+pw/2,py+ph/2);ctx.rotate(Math.PI);drawFace(ctx,-pw/2,-ph/2,pw,ph,p.face,paperHex()); }
-    else { drawFace(ctx,px,py,pw,ph,p.face,paperHex()); }
-    ctx.restore();
-  }
+  for(const p of panels){const px=p.x*DPI,py=p.y*DPI,pw=p.w*DPI,ph=p.h*DPI;ctx.save();
+    if(p.rotate){ctx.translate(px+pw/2,py+ph/2);ctx.rotate(Math.PI);drawFace(ctx,-pw/2,-ph/2,pw,ph,p.face,paperHex(),p.side);}
+    else drawFace(ctx,px,py,pw,ph,p.face,paperHex(),p.side);
+    ctx.restore();}
   return cv;
 }
 async function exportPDF(){
-  const {jsPDF}=window.jspdf;const {w,h}=sheetDims();const fi=foldInfo();
+  const {jsPDF}=window.jspdf;const d=finishedDims();const ps=printSheet();
   const status=$('#dlStatus');status.textContent='Rendering…';await document.fonts.ready;
   const pages=[];
-  if(state.fold==='flat'){
-    pages.push({w,h,canvas:renderSheet(w,h,[{face:state.faces.front,x:0,y:0,w,h,rotate:false}])});
-  } else if(fi.axis==='h'){ // portrait sheet, top fold: bottom panel = content
-    const outside=renderSheet(w,h,[{face:state.faces.front,x:0,y:h/2,w:w,h:h/2,rotate:false}]);
-    const inside =renderSheet(w,h,[{face:state.faces.inside,x:0,y:h/2,w:w,h:h/2,rotate:false}]);
-    pages.push({w,h,canvas:outside},{w,h,canvas:inside});
-  } else { // landscape sheet, side/book fold: right panel = content
-    const outside=renderSheet(w,h,[{face:state.faces.front,x:w/2,y:0,w:w/2,h:h,rotate:false}]);
-    const inside =renderSheet(w,h,[{face:state.faces.inside,x:w/2,y:0,w:w/2,h:h,rotate:false}]);
-    pages.push({w,h,canvas:outside},{w,h,canvas:inside});
+  if(state.fold!=='folded'){
+    pages.push({w:d.w,h:d.h,canvas:renderSheet(d.w,d.h,[{face:state.faces.front,x:0,y:0,w:d.w,h:d.h,side:'front'}])});
+  } else if(ps.axis==='v'){ // book fold: sheet [2w, h]; content on the right panel
+    const fw=d.w,fh=d.h;
+    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.front,x:fw,y:0,w:fw,h:fh,side:'front'}])});
+    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:fw,y:0,w:fw,h:fh,side:'inside'}])});
+  } else { // top fold: sheet [w, 2h]; content on the bottom panel
+    const fw=d.w,fh=d.h;
+    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.front,x:0,y:fh,w:fw,h:fh,side:'front'}])});
+    pages.push({w:ps.w,h:ps.h,canvas:renderSheet(ps.w,ps.h,[{face:state.faces.inside,x:0,y:fh,w:fw,h:fh,side:'inside'}])});
   }
   const first=pages[0];
   const pdf=new jsPDF({unit:'in',format:[first.w,first.h],orientation:first.w>first.h?'landscape':'portrait'});
-  pages.forEach((pg,i)=>{ if(i>0) pdf.addPage([pg.w,pg.h],pg.w>pg.h?'landscape':'portrait');
-    pdf.addImage(pg.canvas.toDataURL('image/png'),'PNG',0,0,pg.w,pg.h,undefined,'FAST'); });
-  const name=slug($('#fileName').value||'bliss-card');pdf.save(name+'.pdf');
+  pages.forEach((pg,i)=>{if(i>0)pdf.addPage([pg.w,pg.h],pg.w>pg.h?'landscape':'portrait');
+    pdf.addImage(pg.canvas.toDataURL('image/png'),'PNG',0,0,pg.w,pg.h,undefined,'FAST');});
+  const name=slug($('#fileName').value||'bliss-studio-card');pdf.save(name+'.pdf');
   status.textContent='Downloaded '+name+'.pdf';toast('Print-ready PDF downloaded');
 }
 $('#downloadBtn').addEventListener('click',()=>{exportPDF().catch(err=>{console.error(err);$('#dlStatus').textContent='Something went wrong rendering the PDF.';});});
 
-/* ---------- init: seed the Basho sample ---------- */
-(function seed(){const f=state.faces.front;f.mode='template';f.template='basho';f.text=BASHO;f.font='Cormorant Garamond';})();
-$('#fileName').value='bliss-card-basho';
+/* ---------- init ---------- */
+(function seed(){const f=state.faces.front;f.mode='template';f.template='thanks';f.font='Great Vibes';f.text='Thank you';})();
+$('#fileName').value='bliss-studio-card';
 window.addEventListener('load',()=>{document.fonts.ready.then(refreshAll);refreshAll();});
 </script>
 </body>
