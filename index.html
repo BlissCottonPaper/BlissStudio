@@ -20,12 +20,34 @@
   *{box-sizing:border-box} html,body{margin:0;padding:0}
   body{background:var(--bliss-warm);color:var(--bliss-text);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:var(--bliss-navy-mid);text-decoration:none} a:hover{text-decoration:underline}
-  .site-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;border-bottom:1px solid var(--bliss-border);background:var(--bliss-warm)}
-  .site-header .brand{display:flex;align-items:center;gap:12px}
-  .site-header .brand img{height:44px;width:auto;display:block}
-  .site-header .brand .studio{font-family:var(--font-serif);font-size:1.35rem;font-weight:600;color:var(--bliss-navy);letter-spacing:.02em;line-height:1}
-  .site-header nav{font-family:var(--font-serif);font-size:1.05rem}
-  .site-header nav a{color:var(--bliss-navy);margin-left:22px}
+  .ann-bar{background:var(--bliss-navy);color:#f4ecdd;text-align:center;font-size:.8rem;letter-spacing:.02em;padding:8px 16px}
+  .site-header{position:sticky;top:0;z-index:40;background:var(--bliss-ivory);border-bottom:1px solid var(--bliss-border)}
+  .header-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:20px;padding:14px 24px}
+  .site-header .brand{display:flex;align-items:center;flex:0 0 auto}
+  .site-header .brand img{height:46px;width:auto;display:block}
+  .site-nav{margin-left:auto}
+  .nav-root{list-style:none;display:flex;gap:24px;margin:0;padding:0}
+  .nav-root > li{position:relative}
+  .nav-root > li > a{font-family:var(--font-serif);font-size:1.1rem;color:var(--bliss-navy);text-decoration:none;padding:6px 0;display:inline-block;white-space:nowrap}
+  .nav-root > li > a:hover{color:var(--bliss-brown)}
+  .nav-quote{color:var(--bliss-brown)!important;font-weight:600}
+  .sub{list-style:none;position:absolute;top:100%;left:0;min-width:210px;background:#fff;border:1px solid var(--bliss-border);border-radius:8px;box-shadow:0 10px 24px rgba(20,40,60,.12);padding:8px;margin:6px 0 0;opacity:0;visibility:hidden;transform:translateY(4px);transition:.15s}
+  .has-sub:hover .sub{opacity:1;visibility:visible;transform:none}
+  .sub li a{display:block;padding:8px 12px;border-radius:6px;font-family:var(--font-sans);font-size:.92rem;color:var(--bliss-text);text-decoration:none;white-space:nowrap}
+  .sub li a:hover{background:var(--bliss-warm)}
+  .header-icons{display:flex;gap:16px;flex:0 0 auto}
+  .header-icons a{font-family:var(--font-sans);font-size:.82rem;color:var(--bliss-navy);text-decoration:none;letter-spacing:.04em;text-transform:uppercase}
+  .header-icons a:hover{color:var(--bliss-brown)}
+  .nav-toggle{display:none;margin-left:auto;background:none;border:none;font-size:1.5rem;line-height:1;color:var(--bliss-navy);cursor:pointer}
+  @media (max-width:900px){
+    .nav-toggle{display:block}
+    .site-nav{position:absolute;top:100%;left:0;right:0;background:var(--bliss-ivory);border-bottom:1px solid var(--bliss-border);margin:0;max-height:0;overflow:hidden;transition:max-height .2s}
+    .site-nav.open{max-height:82vh;overflow:auto}
+    .nav-root{flex-direction:column;gap:0;padding:8px 24px}
+    .nav-root > li > a{padding:11px 0;border-bottom:1px solid var(--bliss-border);display:block}
+    .sub{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:none;padding:2px 0 10px 12px;margin:0;min-width:0}
+    .header-icons{display:none}
+  }
   .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
   .hero{text-align:center;padding:56px 0 26px}
   .hero h1{font-family:var(--font-serif);font-weight:600;color:var(--bliss-navy);font-size:3rem;margin:0 0 10px;letter-spacing:.01em}
@@ -45,16 +67,57 @@
 </style>
 </head>
 <body>
+<div class="ann-bar">Handmade cotton paper · printed beautifully · Free domestic shipping on orders over $50</div>
 <header class="site-header">
-  <a class="brand" href="/">
-    <img src="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068" alt="Bliss Cotton Paper + Print">
-    <span class="studio">Bliss&nbsp;Studio</span>
-  </a>
-  <nav>
-    <a href="/">Studio</a>
-    <a href="/card-studio/">Card Studio</a>
-    <a href="https://blisscottonpaper.com" target="_blank" rel="noopener">Shop</a>
-  </nav>
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="Bliss Studio home">
+      <img src="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068" alt="Bliss Cotton Paper + Print">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="site-nav" id="siteNav">
+      <ul class="nav-root">
+        <li class="has-sub"><a href="https://blisscottonpaper.com/collections/cotton-paper-collection">Shop</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/paper">Paper</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/envelopes">Envelopes</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/samples">Samples + swatches</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/plan-your-suite">Plan Your Suite</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/express-lane">Express lane</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/printing">Print + services</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/printing">Printing overview</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/plan-your-suite">Plan Your Suite</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/invitations">Invitation Printing</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/envelope-studio">Envelope Studio</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/day-of-stationery">Event + day-of printing</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/bring-your-vision">Custom projects</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/bring-your-vision">Bring your vision</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/bring-your-vision">Overview</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/brand-stationery">For Brands</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/gallery">Discover</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/gallery">Gallery</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/noteworthy">Noteworthy — Bliss Journal</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/reviews">Reviews</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/bliss-directory">Bliss Creative Directory</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/about-us">About Bliss</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/faq">FAQ</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/contact">Contact Us</a></li>
+            <li><a href="/">Bliss Studio (tools)</a></li>
+          </ul></li>
+        <li><a href="https://blisscottonpaper.com/pages/bliss-pro">BlissPro</a></li>
+        <li><a class="nav-quote" href="https://blisscottonpaper.com/pages/quote">Get a quote →</a></li>
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <a href="https://blisscottonpaper.com/account">Account</a>
+      <a href="https://blisscottonpaper.com/cart">Cart</a>
+    </div>
+  </div>
 </header>
 
 <div class="wrap">
@@ -107,5 +170,12 @@
   <p>Bliss&nbsp;Studio — free tools from <a href="https://blisscottonpaper.com" target="_blank" rel="noopener">Bliss Cotton Paper&nbsp;+&nbsp;Print</a>.<br>
   Handmade cotton paper, printed with care.</p>
 </footer>
+<script>
+  var _t=document.getElementById('navToggle');
+  if(_t) _t.addEventListener('click',function(){
+    var n=document.getElementById('siteNav'), o=n.classList.toggle('open');
+    _t.setAttribute('aria-expanded', o?'true':'false');
+  });
+</script>
 </body>
 </html>
