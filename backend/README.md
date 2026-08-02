@@ -27,10 +27,15 @@ wrangler deploy
 `wrangler deploy` prints the Worker URL (e.g. https://card-studio-backend.<subdomain>.workers.dev).
 Send that URL over and I'll wire the Card Studio "Order" button to it.
 
-## Before it's live — two things to confirm
-1. **Pricing** — the `PRICING` block in `worker.js` is provisional (paper per-sheet,
-   envelope, addressing). Confirm the exact numbers.
-2. **API field check** — first deploy may surface `userErrors` if the
+## Pricing (confirmed with Marc)
+- Print, per side: 5x7 $2.00 · A6 $2.00 · RSVP $1.50 (double-sided only when the inside has content)
+- Paper flat, per sheet: 5x7 $1.50 · A6 $1.20 · RSVP $0.90
+- Paper folded (7x10 / A5 / 5x7 sheet): 5x7 $2.30 · A6 $1.60 · RSVP $1.50
+- Envelope, each: A7 $2.50 · A6 $2.20 · RSVP $2.00
+- Addressing, each: $2.50
+
+## Before it's live
+1. **API field check** — first deploy may surface `userErrors` if the
    DraftOrderLineItemInput price field or FileCreate enums differ on the pinned
    `API_VERSION`; easy adjustments, but they need a live test call.
 

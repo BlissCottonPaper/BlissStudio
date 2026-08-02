@@ -93,11 +93,11 @@ async function uploadPdf(env, token, bytes, filename) {
 }
 
 /* ---- PRICING (provisional — confirm the exact table with Marc) ---- */
-const PRINT_RATE = { '5x7': 2.00, 'A6': 2.00, 'RSVP': 1.50 };  // per printed side, batch
-const PAPER_FLAT = { '5x7': 1.50, 'A6': 1.20, 'RSVP': 0.90 };  // per sheet (SET-PPR set/10)  — CONFIRM
-const PAPER_FOLD = { '5x7': 2.30, 'A6': 1.60, 'RSVP': 1.50 };  // folded prints on 7x10/A5/5x7 — CONFIRM
-const ENV_FOR = { '5x7': 'A7', 'A6': 'A6', 'RSVP': 'RSVP' };
-const ENV_PRICE = 2.20;    // per envelope (SET-ENV set/10) — CONFIRM
+const PRINT_RATE = { '5x7': 2.00, 'A6': 2.00, 'RSVP': 1.50 };  // per printed side, batch (confirmed)
+const PAPER_FLAT = { '5x7': 1.50, 'A6': 1.20, 'RSVP': 0.90 };  // per sheet (confirmed)
+const PAPER_FOLD = { '5x7': 2.30, 'A6': 1.60, 'RSVP': 1.50 };  // folded: 7x10 / A5 / 5x7 sheet (confirmed)
+const ENV_FOR = { '5x7': 'A7', 'A6': 'A6', 'RSVP': 'RSVP' };   // card size -> envelope size
+const ENV_PRICE = { A7: 2.50, A6: 2.20, RSVP: 2.00 };          // per envelope (confirmed)
 const ADDRESSING = 2.50;   // per piece (SVC-OuterEnv-Addressing)
 
 const money = (n) => n.toFixed(2);
@@ -122,7 +122,7 @@ function lineItems(cfg) {
   if (cfg.envelope && cfg.envelope.on) {
     items.push({
       title: `${cfg.envelope.color} ${ENV_FOR[size]} envelope`, quantity: qty,
-      originalUnitPrice: money(ENV_PRICE), sku: `SET-ENV-${cfg.envelope.color}-${ENV_FOR[size]}`,
+      originalUnitPrice: money(ENV_PRICE[ENV_FOR[size]]), sku: `SET-ENV-${cfg.envelope.color}-${ENV_FOR[size]}`,
       requiresShipping: true, taxable: true,
     });
     if (cfg.addressing && cfg.addressing.on) {
