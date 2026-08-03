@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File Prep · Bliss Studio</title>
+<meta name="description" content="Clean up artwork for print: drop the background to transparent, or flatten to solid black for foil, white ink, and letterpress dies. A free tool from Bliss Cotton Paper + Print.">
+<link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/logoWht.png?v=1771450695">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bliss-navy:#14283c; --bliss-navy-mid:#1e3d5c; --bliss-blush:#c8a0a0; --bliss-brown:#643c28;
+    --bliss-ivory:#f7f3ee; --bliss-warm:#fdfaf6; --bliss-border:#ddd8d0; --bliss-text:#14283c;
+    --bliss-text-mid:#3a5265; --bliss-vision:#4a44a8;
+    --font-serif:'Cormorant Garamond','Garamond','Georgia',serif;
+    --font-sans:'Assistant',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{background:var(--bliss-warm);color:var(--bliss-text);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--bliss-navy-mid);text-decoration:none} a:hover{text-decoration:underline}
+
+  .ann-bar{background:var(--bliss-navy);color:#f4ecdd;text-align:center;font-size:.8rem;letter-spacing:.02em;padding:8px 16px}
+  .site-header{position:sticky;top:0;z-index:40;background:var(--bliss-ivory);border-bottom:1px solid var(--bliss-border)}
+  .header-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:20px;padding:14px 24px}
+  .site-header .brand{display:flex;align-items:center;flex:0 0 auto}
+  .site-header .brand img{height:46px;width:auto;display:block}
+  .site-nav{margin-left:auto}
+  .nav-root{list-style:none;display:flex;gap:24px;margin:0;padding:0}
+  .nav-root > li{position:relative}
+  .nav-root > li > a{font-family:var(--font-serif);font-size:1.1rem;color:var(--bliss-navy);text-decoration:none;padding:6px 0;display:inline-block;white-space:nowrap}
+  .nav-root > li > a:hover{color:var(--bliss-brown)}
+  .nav-quote{color:var(--bliss-brown)!important;font-weight:600}
+  .sub{list-style:none;position:absolute;top:100%;left:0;min-width:210px;background:#fff;border:1px solid var(--bliss-border);border-radius:8px;box-shadow:0 10px 24px rgba(20,40,60,.12);padding:8px;margin:6px 0 0;opacity:0;visibility:hidden;transform:translateY(4px);transition:.15s}
+  .has-sub:hover .sub{opacity:1;visibility:visible;transform:none}
+  .sub li a{display:block;padding:8px 12px;border-radius:6px;font-family:var(--font-sans);font-size:.92rem;color:var(--bliss-text);text-decoration:none;white-space:nowrap}
+  .sub li a:hover{background:var(--bliss-warm)}
+  .header-icons{display:flex;gap:16px;flex:0 0 auto}
+  .header-icons a{font-family:var(--font-sans);font-size:.82rem;color:var(--bliss-navy);text-decoration:none;letter-spacing:.04em;text-transform:uppercase}
+  .header-icons a:hover{color:var(--bliss-brown)}
+  .nav-toggle{display:none;margin-left:auto;background:none;border:none;font-size:1.5rem;line-height:1;color:var(--bliss-navy);cursor:pointer}
+  @media (max-width:900px){
+    .nav-toggle{display:block}
+    .site-nav{position:absolute;top:100%;left:0;right:0;background:var(--bliss-ivory);border-bottom:1px solid var(--bliss-border);margin:0;max-height:0;overflow:hidden;transition:max-height .2s}
+    .site-nav.open{max-height:82vh;overflow:auto}
+    .nav-root{flex-direction:column;gap:0;padding:8px 24px}
+    .nav-root > li > a{padding:11px 0;border-bottom:1px solid var(--bliss-border);display:block}
+    .sub{position:static;opacity:1;visibility:visible;transform:none;box-shadow:none;border:none;padding:2px 0 10px 12px;margin:0;min-width:0}
+    .header-icons{display:none}
+  }
+  .site-footer{border-top:1px solid var(--bliss-border);margin-top:56px;padding:28px 24px;text-align:center;color:var(--bliss-text-mid);font-size:.9rem;background:var(--bliss-ivory)}
+  .site-footer a{color:var(--bliss-navy-mid)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  .lede{margin:34px 0 8px;text-align:center}
+  .lede h1{font-family:var(--font-serif);font-weight:600;color:var(--bliss-navy);font-size:2.5rem;margin:0 0 6px;letter-spacing:.01em}
+  .lede p{color:var(--bliss-text-mid);margin:0 auto;max-width:620px}
+
+  .studio-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,440px);gap:32px;align-items:start;margin:28px 0}
+  @media (max-width:880px){ .studio-grid{grid-template-columns:1fr} }
+
+  .card-block{background:#fff;border:1px solid var(--bliss-border);border-radius:14px;padding:22px 22px 24px;margin-bottom:18px}
+  .card-block h2{font-family:var(--font-serif);font-weight:600;color:var(--bliss-navy);font-size:1.45rem;margin:0 0 4px}
+  .card-block .hint{color:var(--bliss-text-mid);font-size:.9rem;margin:0 0 16px}
+  .field{margin:16px 0}
+  .field > label{display:block;font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bliss-text-mid);margin-bottom:8px}
+
+  .dropzone{border:2px dashed var(--bliss-border);border-radius:12px;padding:32px 16px;text-align:center;cursor:pointer;transition:.15s;color:var(--bliss-text-mid)}
+  .dropzone:hover,.dropzone.drag{border-color:var(--bliss-navy-mid);background:var(--bliss-warm)}
+  .dropzone strong{color:var(--bliss-navy)}
+
+  .switch-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0}
+  .lbl{font-weight:600;font-size:.95rem;color:var(--bliss-text)}
+  .lbl small{display:block;font-weight:400;color:var(--bliss-text-mid);font-size:.82rem;margin-top:2px}
+  .switch{position:relative;display:inline-block;width:44px;height:24px;flex:0 0 auto}
+  .switch input{opacity:0;width:0;height:0}
+  .fp-slider{position:absolute;cursor:pointer;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s}
+  .fp-slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
+  input:checked + .fp-slider{background:var(--bliss-navy)}
+  input:checked + .fp-slider:before{transform:translateX(20px)}
+  input:disabled + .fp-slider{opacity:.4;cursor:not-allowed}
+
+  input[type=range]{width:100%}
+  .range-row{display:flex;align-items:center;gap:12px}
+  .range-row output{font-size:.85rem;color:var(--bliss-text-mid);min-width:34px;text-align:right}
+
+  .note{font-size:.85rem;color:var(--bliss-brown);background:#fbf1ea;border:1px solid #eeddd0;border-radius:9px;padding:9px 12px;margin-top:12px}
+
+  .preview-wrap{position:sticky;top:88px}
+  .preview-board{background:
+      linear-gradient(45deg,#e9e4da 25%,transparent 25%),
+      linear-gradient(-45deg,#e9e4da 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#e9e4da 75%),
+      linear-gradient(-45deg,transparent 75%,#e9e4da 75%);
+    background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0;
+    border:1px solid var(--bliss-border);border-radius:14px;padding:18px;display:flex;align-items:center;justify-content:center;min-height:320px}
+  .preview-board canvas{max-width:100%;max-height:520px;display:block}
+  .preview-empty{color:var(--bliss-text-mid);font-size:.92rem;text-align:center}
+  .spec-line{margin:10px 2px 0;color:var(--bliss-text-mid);font-size:.86rem;text-align:center}
+
+  .btn{display:inline-block;border-radius:10px;padding:12px 20px;font-family:var(--font-sans);font-weight:600;font-size:.98rem;cursor:pointer;border:1px solid transparent;text-align:center}
+  .btn-primary{background:var(--bliss-navy);color:#fff}
+  .btn-primary:hover{background:var(--bliss-navy-mid)}
+  .btn-primary:disabled{background:var(--bliss-border);cursor:not-allowed}
+  .btn-ghost{background:transparent;border-color:var(--bliss-border);color:var(--bliss-navy)}
+  .btn-ghost:hover{border-color:var(--bliss-navy-mid)}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--bliss-navy);color:#fff;padding:11px 18px;border-radius:10px;font-size:.9rem;opacity:0;pointer-events:none;transition:.2s;z-index:99}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="ann-bar">Handmade cotton paper · printed beautifully · Free domestic shipping on orders over $50</div>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/" aria-label="Bliss Studio home">
+      <img src="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068" alt="Bliss Cotton Paper + Print">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
+    <nav class="site-nav" id="siteNav">
+      <ul class="nav-root">
+        <li class="has-sub"><a href="https://blisscottonpaper.com/collections/cotton-paper-collection">Shop</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/paper">Paper</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/envelopes">Envelopes</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/samples">Samples + swatches</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/plan-your-suite">Plan Your Suite</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/express-lane">Express lane</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/printing">Print + services</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/printing">Printing overview</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/plan-your-suite">Plan Your Suite</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/invitations">Invitation Printing</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/envelope-studio">Envelope Studio</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/day-of-stationery">Event + day-of printing</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/bring-your-vision">Custom projects</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/bring-your-vision">Bring your vision</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/bring-your-vision">Overview</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/brand-stationery">For Brands</a></li>
+          </ul></li>
+        <li class="has-sub"><a href="https://blisscottonpaper.com/pages/gallery">Discover</a>
+          <ul class="sub">
+            <li><a href="https://blisscottonpaper.com/pages/gallery">Gallery</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/noteworthy">Noteworthy — Bliss Journal</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/reviews">Reviews</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/bliss-directory">Bliss Creative Directory</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/about-us">About Bliss</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/faq">FAQ</a></li>
+            <li><a href="https://blisscottonpaper.com/pages/contact">Contact Us</a></li>
+            <li><a href="/">Bliss Studio (tools)</a></li>
+          </ul></li>
+        <li><a href="https://blisscottonpaper.com/pages/bliss-pro">BlissPro</a></li>
+        <li><a class="nav-quote" href="https://blisscottonpaper.com/pages/quote">Get a quote →</a></li>
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <a href="https://blisscottonpaper.com/account">Account</a>
+      <a href="https://blisscottonpaper.com/cart">Cart</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="lede">
+    <h1>File Prep</h1>
+    <p>Clean up artwork before you print or send it out for a die. Drop the background to transparent, or flatten everything to solid black for foil, white ink, or a letterpress die (like Boxcar Press).</p>
+  </div>
+
+  <div class="studio-grid">
+    <div class="controls">
+      <div class="card-block">
+        <h2>Upload artwork</h2>
+        <p class="hint">PNG or JPG. For a die, start with the highest-resolution, highest-contrast version you have.</p>
+        <div class="dropzone" id="dropzone">
+          <div><strong>Click to upload</strong> or drag an image here</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/png,image/jpeg" style="display:none">
+      </div>
+
+      <div class="card-block">
+        <h2>Remove background</h2>
+        <p class="hint">Keys out the background color (sampled from the top-left corner of your image) plus any near-white pixels, so the art sits cleanly on paper.</p>
+        <div class="switch-row">
+          <div class="lbl">Remove background<small>Off leaves your image exactly as uploaded.</small></div>
+          <label class="switch"><input type="checkbox" id="rmBg"><span class="fp-slider"></span></label>
+        </div>
+        <div class="field" id="tolField" style="display:none">
+          <label>Sensitivity</label>
+          <div class="range-row"><input type="range" id="tol" min="20" max="220" value="100"><output id="tolOut">100</output></div>
+        </div>
+      </div>
+
+      <div class="card-block">
+        <h2>Flatten to black</h2>
+        <p class="hint">Turns every visible pixel solid black on a transparent background — no CMY values, exactly what a foil, white-ink, or letterpress die needs. Use after removing the background.</p>
+        <div class="switch-row">
+          <div class="lbl">Flatten to black<small>Off keeps original colors.</small></div>
+          <label class="switch"><input type="checkbox" id="flatten"><span class="fp-slider"></span></label>
+        </div>
+        <div class="field" id="threshField" style="display:none">
+          <label>Ink threshold</label>
+          <div class="range-row"><input type="range" id="thresh" min="1" max="254" value="200"><output id="threshOut">200</output></div>
+        </div>
+        <div class="switch-row" id="hardRow" style="display:none">
+          <div class="lbl">Hard edges<small>Recommended for dies — avoids soft, partial-black pixels that can confuse a die cutter.</small></div>
+          <label class="switch"><input type="checkbox" id="hardEdge" checked><span class="fp-slider"></span></label>
+        </div>
+        <div class="note" id="dieNote">Sending this to a die maker (Boxcar Press or similar)? Flatten to black first, then download — a die is cut from the black shape only, so color and shading don't matter.</div>
+      </div>
+
+      <div class="card-block">
+        <h2>Download</h2>
+        <div class="field"><label>File name</label><input type="text" id="fileName" placeholder="bliss-file-prep"></div>
+        <div class="field"><button class="btn btn-primary" id="downloadBtn" style="width:100%" disabled>Download PNG</button></div>
+      </div>
+    </div>
+
+    <div class="preview-wrap">
+      <div class="preview-board" id="board">
+        <div class="preview-empty" id="previewEmpty">Upload an image to preview it here.</div>
+        <canvas id="cv" style="display:none"></canvas>
+      </div>
+      <div class="spec-line" id="specLine"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Bliss&nbsp;Studio — free tools from <a href="https://blisscottonpaper.com" target="_blank" rel="noopener">Bliss Cotton Paper&nbsp;+&nbsp;Print</a>.<br>Handmade cotton paper, printed with care.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+
+$('#navToggle').addEventListener('click',()=>{const n=$('#siteNav');const open=n.classList.toggle('open');$('#navToggle').setAttribute('aria-expanded',open);});
+
+let rawImage=null; // original uploaded Image
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
+
+/* ---------- image processing ---------- */
+function removeBg(img,tol){
+  const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
+  const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);
+  const d=x.getImageData(0,0,c.width,c.height),p=d.data,kr=p[0],kg=p[1],kb=p[2];
+  for(let i=0;i<p.length;i+=4){const r=p[i],g=p[i+1],b=p[i+2];
+    if((Math.abs(r-kr)+Math.abs(g-kg)+Math.abs(b-kb))<tol || (r>238&&g>238&&b>238)) p[i+3]=0;}
+  x.putImageData(d,0,0);return c;
+}
+function flattenToBlack(srcCanvasOrImg,thresh,hard){
+  const w=srcCanvasOrImg.naturalWidth||srcCanvasOrImg.width, h=srcCanvasOrImg.naturalHeight||srcCanvasOrImg.height;
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');x.drawImage(srcCanvasOrImg,0,0,w,h);
+  const d=x.getImageData(0,0,w,h),p=d.data;
+  for(let i=0;i<p.length;i+=4){
+    const r=p[i],g=p[i+1],b=p[i+2],a=p[i+3];
+    // luminance of the pixel (on white, since alpha-composited art can still carry light ink colors)
+    const lum=0.299*r+0.587*g+0.114*b;
+    const isInk = a>10 && lum<thresh;
+    p[i]=0;p[i+1]=0;p[i+2]=0;
+    if(hard) p[i+3]=isInk?255:0;
+    else p[i+3]=isInk?a:0;
+  }
+  x.putImageData(d,0,0);return c;
+}
+
+function process(){
+  if(!rawImage) return;
+  let src = $('#rmBg').checked ? removeBg(rawImage, +$('#tol').value) : rawImage;
+  let out = $('#flatten').checked ? flattenToBlack(src, +$('#thresh').value, $('#hardEdge').checked) : src;
+  const w = out.naturalWidth||out.width, h = out.naturalHeight||out.height;
+  const cv=$('#cv'); cv.width=w; cv.height=h;
+  cv.getContext('2d').clearRect(0,0,w,h);
+  cv.getContext('2d').drawImage(out,0,0,w,h);
+  $('#specLine').textContent = `${w} × ${h}px`;
+}
+
+function loadFile(file){
+  if(!file || !/^image\/(png|jpeg)$/.test(file.type)){ toast('Please upload a PNG or JPG.'); return; }
+  const img=new Image();
+  img.onload=()=>{
+    rawImage=img;
+    $('#previewEmpty').style.display='none';
+    $('#cv').style.display='block';
+    $('#downloadBtn').disabled=false;
+    process();
+  };
+  img.src=URL.createObjectURL(file);
+}
+
+$('#dropzone').addEventListener('click',()=>$('#fileInput').click());
+$('#fileInput').addEventListener('change',e=>loadFile(e.target.files[0]));
+['dragover','dragenter'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.add('drag');}));
+['dragleave','drop'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.remove('drag');}));
+$('#dropzone').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)loadFile(f);});
+
+$('#rmBg').addEventListener('change',e=>{$('#tolField').style.display=e.target.checked?'block':'none';process();});
+$('#tol').addEventListener('input',e=>{$('#tolOut').textContent=e.target.value;process();});
+$('#flatten').addEventListener('change',e=>{const on=e.target.checked;$('#threshField').style.display=on?'block':'none';$('#hardRow').style.display=on?'flex':'none';process();});
+$('#thresh').addEventListener('input',e=>{$('#threshOut').textContent=e.target.value;process();});
+$('#hardEdge').addEventListener('change',process);
+
+function slug(s){return (s||'bliss-file-prep').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'bliss-file-prep';}
+$('#downloadBtn').addEventListener('click',()=>{
+  if(!rawImage) return;
+  const cv=$('#cv');
+  const a=document.createElement('a');
+  a.href=cv.toDataURL('image/png');
+  a.download=slug($('#fileName').value)+'.png';
+  document.body.appendChild(a);a.click();a.remove();
+  toast('Downloaded');
+});
+</script>
+</body>
+</html>
