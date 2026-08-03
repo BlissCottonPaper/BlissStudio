@@ -56,13 +56,13 @@
 #card-studio .chip.sel{border-color:var(--bliss-navy);background:#fff;box-shadow:0 0 0 2px rgba(20,40,60,.12)}
 #card-studio .toggle2{display:flex;gap:10px}
 #card-studio .toggle2 .chip{flex:1;text-align:center}
-#card-studio .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
-#card-studio .swatch{border:1px solid var(--bliss-border);border-radius:10px;padding:8px;cursor:pointer;background:#fff;transition:.15s;text-align:center}
-#card-studio .swatch:hover{border-color:var(--bliss-navy-mid)}
-#card-studio .swatch.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
-#card-studio .swatch.off{opacity:.34;cursor:not-allowed;filter:grayscale(.4)}
-#card-studio .swatch .dot{height:44px;border-radius:7px;border:1px solid rgba(0,0,0,.08);margin-bottom:6px}
-#card-studio .swatch .nm{font-size:.78rem;color:var(--bliss-text);line-height:1.2}
+#card-studio .cs-swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+#card-studio .cs-swatch{border:1px solid var(--bliss-border);border-radius:10px;padding:8px;cursor:pointer;background:#fff;transition:.15s;text-align:center}
+#card-studio .cs-swatch:hover{border-color:var(--bliss-navy-mid)}
+#card-studio .cs-swatch.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
+#card-studio .cs-swatch.off{opacity:.34;cursor:not-allowed;filter:grayscale(.4)}
+#card-studio .cs-swatch .cs-dot{height:44px;border-radius:7px;border:1px solid rgba(0,0,0,.08);margin-bottom:6px}
+#card-studio .cs-swatch .nm{font-size:.78rem;color:var(--bliss-text);line-height:1.2}
 #card-studio .note{font-size:.85rem;color:var(--bliss-brown);background:#fbf1ea;border:1px solid #eeddd0;border-radius:9px;padding:9px 12px;margin-top:12px}
 #card-studio .mode-tabs{display:flex;gap:8px;margin-bottom:14px}
 #card-studio .mode-tabs button{flex:1;border:1px solid var(--bliss-border);background:var(--bliss-warm);border-radius:9px;padding:9px;cursor:pointer;font-family:var(--font-sans);font-weight:600;color:var(--bliss-text-mid);font-size:.88rem}
@@ -95,10 +95,10 @@
 #card-studio .switch-row .lbl small{display:block;color:var(--bliss-text-mid);font-size:.78rem}
 #card-studio .switch{position:relative;width:44px;height:24px;flex:0 0 auto}
 #card-studio .switch input{opacity:0;width:0;height:0}
-#card-studio .slider{position:absolute;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s;cursor:pointer}
-#card-studio .slider::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
-#card-studio .switch input:checked + .slider{background:var(--bliss-navy)}
-#card-studio .switch input:checked + .slider::before{transform:translateX(20px)}
+#card-studio .cs-slider{position:absolute;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s;cursor:pointer}
+#card-studio .cs-slider::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
+#card-studio .switch input:checked + .cs-slider{background:var(--bliss-navy)}
+#card-studio .switch input:checked + .cs-slider::before{transform:translateX(20px)}
 #card-studio .qty{display:flex;align-items:center;max-width:170px}
 #card-studio .qty button{width:44px;height:44px;border:1px solid var(--bliss-border);background:var(--bliss-warm);font-size:1.35rem;line-height:1;cursor:pointer;color:var(--bliss-navy)}
 #card-studio .qty button:first-child{border-radius:9px 0 0 9px}

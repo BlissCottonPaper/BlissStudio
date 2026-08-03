@@ -88,13 +88,13 @@
   .toggle2{display:flex;gap:10px}
   .toggle2 .chip{flex:1;text-align:center}
 
-  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
-  .swatch{border:1px solid var(--bliss-border);border-radius:10px;padding:8px;cursor:pointer;background:#fff;transition:.15s;text-align:center}
-  .swatch:hover{border-color:var(--bliss-navy-mid)}
-  .swatch.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
-  .swatch.off{opacity:.34;cursor:not-allowed;filter:grayscale(.4)}
-  .swatch .dot{height:44px;border-radius:7px;border:1px solid rgba(0,0,0,.08);margin-bottom:6px}
-  .swatch .nm{font-size:.78rem;color:var(--bliss-text);line-height:1.2}
+  .cs-swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+  .cs-swatch{border:1px solid var(--bliss-border);border-radius:10px;padding:8px;cursor:pointer;background:#fff;transition:.15s;text-align:center}
+  .cs-swatch:hover{border-color:var(--bliss-navy-mid)}
+  .cs-swatch.sel{border-color:var(--bliss-navy);box-shadow:0 0 0 2px rgba(20,40,60,.12)}
+  .cs-swatch.off{opacity:.34;cursor:not-allowed;filter:grayscale(.4)}
+  .cs-swatch .cs-dot{height:44px;border-radius:7px;border:1px solid rgba(0,0,0,.08);margin-bottom:6px}
+  .cs-swatch .nm{font-size:.78rem;color:var(--bliss-text);line-height:1.2}
 
   .note{font-size:.85rem;color:var(--bliss-brown);background:#fbf1ea;border:1px solid #eeddd0;border-radius:9px;padding:9px 12px;margin-top:12px}
 
@@ -133,10 +133,10 @@
   .switch-row .lbl{font-size:.92rem;color:var(--bliss-text)} .switch-row .lbl small{display:block;color:var(--bliss-text-mid);font-size:.78rem}
   .switch{position:relative;width:44px;height:24px;flex:0 0 auto}
   .switch input{opacity:0;width:0;height:0}
-  .slider{position:absolute;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s;cursor:pointer}
-  .slider::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
-  .switch input:checked + .slider{background:var(--bliss-navy)}
-  .switch input:checked + .slider::before{transform:translateX(20px)}
+  .cs-slider{position:absolute;inset:0;background:var(--bliss-border);border-radius:99px;transition:.15s;cursor:pointer}
+  .cs-slider::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s}
+  .switch input:checked + .cs-slider{background:var(--bliss-navy)}
+  .switch input:checked + .cs-slider::before{transform:translateX(20px)}
 
   .qty{display:flex;align-items:center;max-width:170px}
   .qty button{width:44px;height:44px;border:1px solid var(--bliss-border);background:var(--bliss-warm);font-size:1.35rem;line-height:1;cursor:pointer;color:var(--bliss-navy)}
@@ -256,7 +256,7 @@
 
           <div class="field">
             <label>Paper color</label>
-            <div class="swatches" id="paperSwatches"></div>
+            <div class="cs-swatches" id="paperSwatches"></div>
             <div id="paperStockNote" class="note hidden"></div>
           </div>
         </div>
@@ -272,7 +272,7 @@
           </div>
           <div id="envColorField" class="field hidden">
             <label>Envelope color <span style="text-transform:none;letter-spacing:0;font-weight:400">(20 in stock)</span></label>
-            <div class="swatches" id="envSwatches"></div>
+            <div class="cs-swatches" id="envSwatches"></div>
             <div id="envMatchNote" class="note hidden"></div>
             <div id="envInkNote" class="note hidden"></div>
           </div>
@@ -317,7 +317,7 @@
             </div>
             <div class="switch-row" style="border-top:1px solid var(--bliss-border)">
               <div class="lbl">Remove background<small>Drops the white / corner background so the art sits on the paper.</small></div>
-              <label class="switch"><input type="checkbox" id="bgRemove"><span class="slider"></span></label>
+              <label class="switch"><input type="checkbox" id="bgRemove"><span class="cs-slider"></span></label>
             </div>
           </div>
         </div>
@@ -326,7 +326,7 @@
           <h2>Finish</h2>
           <div class="switch-row">
             <div class="lbl">Full bleed<small>Runs color &amp; artwork off all four edges — no border on the deckle edge. Off keeps a safe margin.</small></div>
-            <label class="switch"><input type="checkbox" id="fullBleed"><span class="slider"></span></label>
+            <label class="switch"><input type="checkbox" id="fullBleed"><span class="cs-slider"></span></label>
           </div>
         </div>
 
@@ -595,8 +595,8 @@ function buildSwatches(){
   const avail=availablePaper(); const p=$('#paperSwatches');p.innerHTML='';
   for(const [name,hex] of PAPER_COLORS){
     const on=avail.includes(name);
-    const d=document.createElement('button');d.className='swatch'+(state.paper===name?' sel':'')+(on?'':' off');
-    d.innerHTML=`<div class="dot" style="background:${hex}"></div><div class="nm">${name}</div>`;
+    const d=document.createElement('button');d.className='cs-swatch'+(state.paper===name?' sel':'')+(on?'':' off');
+    d.innerHTML=`<div class="cs-dot" style="background:${hex}"></div><div class="nm">${name}</div>`;
     if(on) d.onclick=()=>{state.paper=name;syncEnvMatch();refreshAll();};
     p.appendChild(d);
   }
@@ -606,8 +606,8 @@ function buildSwatches(){
 
   const e=$('#envSwatches');e.innerHTML='';
   for(const [name,hex] of ENV_COLORS){
-    const d=document.createElement('button');d.className='swatch'+(state.envColor===name?' sel':'');
-    d.innerHTML=`<div class="dot" style="background:${hex}"></div><div class="nm">${name}</div>`;
+    const d=document.createElement('button');d.className='cs-swatch'+(state.envColor===name?' sel':'');
+    d.innerHTML=`<div class="cs-dot" style="background:${hex}"></div><div class="nm">${name}</div>`;
     d.onclick=()=>{state.envColor=name;refreshAll();};e.appendChild(d);
   }
 }
