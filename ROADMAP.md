@@ -62,17 +62,34 @@ the top-of-list destination, and the main site links out to it.
 | Retire main-site Tools → Studio | Planned |
 | Post-purchase upsell | Planned |
 
-## Real-SKU linking (in progress)
-Card Studio's checkout still points at 5 placeholder products (`card-studio`
-tag), not the real per-color paper/envelope products. Plan: add a **Format**
-option (`Set of 10` / `Single Sheet`) to each real paper/envelope product,
-with the Single Sheet variant priced at exactly 1/10 the pack price and
-inventory-untracked (so it can't block a Card Studio order). Piloted
-successfully on **Ivory 300gsm Handmade Cotton Paper** (deckle) — 5 variants
-added (5x7 $1.50, A6 $1.20, RSVP $0.90, 7x10 $2.30, A5 $1.60), zero errors.
-Paused for confirmation before rolling out to the remaining ~29 products
-(8 more paper colors, Ivory/White cut-edge, Ivory/White gold-trim, 20
-envelope colors) and rewiring Card Studio's `VARIANTS` to the real IDs.
+## Real-SKU linking
+**SKUs done (2026-08-03).** Every real paper and envelope product now has a
+**Format** option (`Set of 10` / `Single Sheet`), added via `productOptionsCreate`
+(`LEAVE_AS_IS`, so existing "Set of 10" variants were untouched) plus new
+Single Sheet variants via `productVariantsBulkCreate`, priced at exactly 1/10
+the pack price and inventory-untracked (so a Card Studio order can never be
+blocked by paper/envelope stock levels):
+- 9 deckle paper colors (Oat, Pistachio, Light Sage, Something Blue, Blush
+  Pink, Coral Peach, French Blue, Beige, White) — 5x7 $1.50 / A6 $1.20 /
+  RSVP $0.90 (+ White also gets 7x10 $2.30 / A5 $1.60, matching Ivory).
+- Ivory (done earlier as the pilot) and White cut-edge paper — same 5 sizes/
+  prices as deckle.
+- All 20 envelope colors — A7 $2.50 / A6 $2.20 / RSVP $2.00. Note: envelope
+  products' size option is named **"Envelope Size"**, not "Size" like paper —
+  tripped up the first pass (19 of 20 failed with the wrong option name,
+  caught by checking `variantsCount` per product post-mutation, fixed on
+  retry). All 31 products (11 paper + 20 envelope) verified at their expected
+  variant count.
+
+**Still open, not yet done:**
+1. Rewire Card Studio's `VARIANTS` (`card-studio/index.html`) from the 5
+   placeholder products to these real Single Sheet variant IDs, per color.
+2. Card Studio's UI has no cut-vs-deckle edge selector yet — needs building
+   before the new cut-edge SKUs are reachable from the tool (currently only
+   deckle is offered).
+3. Retire/archive the 5 placeholder `card-studio`-tagged products once (1) ships.
+4. Gold Trim (Ivory & White) still not wired in — real products exist but show
+   0 inventory on every variant; confirm restock/production status first.
 
 **Open question:** Ivory & White "Gold Trim" (gilded edge) paper already
 exist as real products (5x7/4x9/A6/RSVP/Table, no fold sizes) but show
