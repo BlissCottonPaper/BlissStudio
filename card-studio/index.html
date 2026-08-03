@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Card Studio · Bliss Studio</title>
 <meta name="description" content="Design a card on Bliss cotton paper and download a print-ready file. A free tool from Bliss Cotton Paper + Print.">
-<link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/Bliss_Logo_-_paper_Print_-_Transparent.png?v=1781217068">
+<link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/logoWht.png?v=1771450695">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -280,9 +280,10 @@
               <label class="switch"><input type="checkbox" id="addressingToggle"><span class="cs-slider"></span></label>
             </div>
             <div id="returnAddressField" class="field hidden" style="margin-top:14px">
-              <label>Return address <span style="text-transform:none;letter-spacing:0;font-weight:400">(printed on the back flap)</span></label>
+              <label>Your return address <span style="text-transform:none;letter-spacing:0;font-weight:400">(printed on the back flap — same for every envelope)</span></label>
               <input type="text" id="returnName" placeholder="Name" style="margin-bottom:8px">
               <textarea id="returnAddress" placeholder="Street address&#10;City, State ZIP" style="min-height:64px"></textarea>
+              <p class="hint" style="margin-top:8px">Who you're sending <em>to</em> — the recipient address for the front of the envelope — is set on the next step, once you've chosen how many cards.</p>
             </div>
           </div>
         </div>
@@ -365,8 +366,8 @@
             <textarea id="recipientAddress" placeholder="Street address&#10;City, State ZIP" style="min-height:64px"></textarea>
           </div>
           <div id="recipientListField" class="field hidden">
-            <label>Mailing list <span style="text-transform:none;letter-spacing:0;font-weight:400">(CSV — name, address)</span></label>
-            <input type="file" id="mailingListInput" accept=".csv">
+            <label>Mailing list <span style="text-transform:none;letter-spacing:0;font-weight:400">(CSV or Excel — name, address)</span></label>
+            <input type="file" id="mailingListInput" accept=".csv,.xlsx,.xls">
             <p class="hint" style="margin-top:8px">We'll address each envelope from your list by hand for this order. Automatic per-envelope printing is coming.</p>
           </div>
           <div class="field" style="margin-top:12px"><button class="btn btn-primary" id="orderBtn" style="width:100%">Order these cards →</button></div>
