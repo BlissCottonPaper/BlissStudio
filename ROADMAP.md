@@ -44,3 +44,12 @@ the top-of-list destination, and the main site links out to it.
 | Day-Of Studio | Planned |
 | Retire main-site Tools → Studio | Planned |
 | Post-purchase upsell | Planned |
+
+## Backlog / polish (added)
+- **SEO** — set title/meta on remaining pages; add descriptive copy/FAQ to tool
+  pages (they're JS-heavy); Product/structured data; image alt text; internal
+  linking once Studio is in the nav. Run the Ahrefs audit (DR, organic keywords,
+  top pages, technical issues) and prioritize from real data.
+- **Theme footer cleanup** — remove the empty link column (block points at an
+  empty menu), fix low-contrast navy footer text, and reduce excess padding/height.
+  (Live-theme edit — do in Theme editor, or via an unpublished duplicate + publish.)
