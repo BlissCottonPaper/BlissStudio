@@ -45,6 +45,37 @@ the top-of-list destination, and the main site links out to it.
 | Retire main-site Tools → Studio | Planned |
 | Post-purchase upsell | Planned |
 
+## Checkout architecture (decided)
+Card Studio checkout uses the **native Shopify cart** — no custom backend:
+- Card Studio stays on `studio.blisscottonpaper.com` (Cloudflare Pages).
+- "Order these cards" submits a real form (full navigation, so cross-origin is
+  fine) to `blisscottonpaper.com/cart/add`, carrying the printing line item +
+  the design PDF as a native `properties[Design File]` file upload.
+- `return_to` lands on a small dedicated Shopify page, `/pages/card-studio-finish`,
+  which adds the remaining items (paper, envelope, addressing) via `/cart/add.js`
+  (same-origin there) and redirects to `/cart`.
+- 5 new Shopify products back this (`card-studio` tag): Card Studio Paper —
+  Flat/Folded, Card Studio Printing, Card Studio Envelope, Card Studio Envelope
+  Addressing. Prices mirror the Zoho SVC-* rates Marc confirmed.
+- This replaced an earlier Worker + Shopify Draft Order + OAuth design, dropped
+  because the Dev Dashboard's client-credentials/app-install flow was
+  unreliable (`app_not_installed` even from the same org) and added a
+  dependency with nothing to gain — checkout was never going to use the
+  storefront cart under that design anyway. `backend/` (the Worker) and
+  `card-studio.css/js/page.html` (an earlier Shopify-embedded build) are left
+  in the repo unused in case a backend is needed for something else later
+  (e.g. Day-Of Studio's CSV variable printing).
+
+**Known limitation:** the 5 new Card Studio products are *not* inventory-tracked
+and are separate from the retail "Set of 10" paper/envelope products, so a
+Card Studio order does not draw down the real paper/envelope stock counts.
+Fine for v1; revisit if/when accurate inventory reconciliation matters.
+
+**Not yet live-tested end-to-end on the real store** — the build is verified
+via headless mocks (correct variant IDs/quantities, real PDF attached, the
+finishing page adds all items and reaches /cart). Marc should run one real
+test order before pointing customers at it.
+
 ## Backlog / polish (added)
 - **SEO** — set title/meta on remaining pages; add descriptive copy/FAQ to tool
   pages (they're JS-heavy); Product/structured data; image alt text; internal
