@@ -36,7 +36,10 @@ fs.writeFileSync(DIR+'card-studio.css',cssOut);
 const jsOut=`"use strict";\ndocument.getElementById('card-studio').innerHTML=${JSON.stringify(wrapHtml+'\n'+toastStr)};\n${toolScript}\n`;
 fs.writeFileSync(DIR+'card-studio.js',jsOut);
 
-const INTRO=`<p style="max-width:660px;margin:0 auto 16px;color:#3a5265;line-height:1.6;">Design a custom card on real Bliss cotton paper &mdash; choose your size, paper color, and your own words or uploaded artwork, then order it printed and shipped, or download a print-ready 300&nbsp;DPI PDF. Flat or folded, with a matching envelope if you like.</p>`;
+// Matches #card-studio .wrap's own box exactly (max-width:1180px;margin:0 auto;padding:0 24px)
+// so this static, pre-JS paragraph lines up with the tool instead of floating centered
+// in the theme's wider page container.
+const INTRO=`<div style="max-width:1180px;margin:0 auto;padding:0 24px;box-sizing:border-box;"><p style="margin:0 0 16px;color:#3a5265;line-height:1.6;font-family:'Assistant',system-ui,sans-serif;max-width:660px;">Design a custom card on real Bliss cotton paper &mdash; choose your size, paper color, and your own words or uploaded artwork, then order it printed and shipped, or download a print-ready 300&nbsp;DPI PDF. Flat or folded, with a matching envelope if you like.</p></div>`;
 const pageBody=`${INTRO}
 <div id="card-studio"></div>
 <link rel="stylesheet" href="${ASSET_BASE}card-studio.css">
