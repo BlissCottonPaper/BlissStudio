@@ -17,11 +17,17 @@ the top-of-list destination, and the main site links out to it.
 
 ## Tools to live under Studio
 - **Card Studio** — live.
+- **File Prep** *(live)* — `studio.blisscottonpaper.com/file-prep/`. Background
+  removal (chroma-key, same algorithm as Card Studio's upload step) and
+  flatten-to-black for foil/white-ink/letterpress die prep (e.g. Boxcar Press).
+  Client-side only, no ML/API cost.
 - **Envelope Studio** — exists on the main Shopify site (`/pages/envelope-studio`);
   bring it under Studio. Its font system (42 fonts across 9 moods) already powers
   Card Studio's font picker.
 - **QR Code generator** — pull in / build. Pairs naturally with printed
   stationery (link to a wedding site, registry, RSVP, or a Card Studio card).
+- **Palette Selector** *(coming soon — card live on the hub)* — pick paper,
+  envelope, and ink colors that pair well together.
 - **Invitation Studio / Wedding Studio** — flagship (see above).
 - **Day-Of Studio** — day-of wedding/event stationery (may live inside the
   Wedding Studio rather than standalone).
@@ -38,12 +44,31 @@ the top-of-list destination, and the main site links out to it.
 | Tool | Status |
 |---|---|
 | Card Studio | Live (v1) |
+| File Prep | Live |
 | Envelope Studio | On main site; to migrate under Studio |
 | QR Code generator | Planned |
+| Palette Selector | Planned (card live on hub as "coming soon") |
 | Invitation / Wedding Studio | Planned (flagship) |
 | Day-Of Studio | Planned |
 | Retire main-site Tools → Studio | Planned |
 | Post-purchase upsell | Planned |
+
+## Real-SKU linking (in progress)
+Card Studio's checkout still points at 5 placeholder products (`card-studio`
+tag), not the real per-color paper/envelope products. Plan: add a **Format**
+option (`Set of 10` / `Single Sheet`) to each real paper/envelope product,
+with the Single Sheet variant priced at exactly 1/10 the pack price and
+inventory-untracked (so it can't block a Card Studio order). Piloted
+successfully on **Ivory 300gsm Handmade Cotton Paper** (deckle) — 5 variants
+added (5x7 $1.50, A6 $1.20, RSVP $0.90, 7x10 $2.30, A5 $1.60), zero errors.
+Paused for confirmation before rolling out to the remaining ~29 products
+(8 more paper colors, Ivory/White cut-edge, Ivory/White gold-trim, 20
+envelope colors) and rewiring Card Studio's `VARIANTS` to the real IDs.
+
+**Open question:** Ivory & White "Gold Trim" (gilded edge) paper already
+exist as real products (5x7/4x9/A6/RSVP/Table, no fold sizes) but show
+**0 inventory** on every variant — needs a restock, or isn't in production
+yet. Confirm before wiring gold-edge into Card Studio.
 
 ## Checkout architecture (decided)
 Card Studio checkout uses the **native Shopify cart** — no custom backend:
