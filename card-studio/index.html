@@ -276,8 +276,13 @@
             <div id="envMatchNote" class="note hidden"></div>
             <div id="envInkNote" class="note hidden"></div>
             <div class="switch-row" style="border-top:1px solid var(--bliss-border);margin-top:6px">
-              <div class="lbl">Address the envelope for me<small>We print the recipient address on the outer envelope, $2.50 each.</small></div>
+              <div class="lbl">Address the envelope for me<small>We print the recipient address on the front and your return address on the back flap, $2.50 each.</small></div>
               <label class="switch"><input type="checkbox" id="addressingToggle"><span class="cs-slider"></span></label>
+            </div>
+            <div id="returnAddressField" class="field hidden" style="margin-top:14px">
+              <label>Return address <span style="text-transform:none;letter-spacing:0;font-weight:400">(printed on the back flap)</span></label>
+              <input type="text" id="returnName" placeholder="Name" style="margin-bottom:8px">
+              <textarea id="returnAddress" placeholder="Street address&#10;City, State ZIP" style="min-height:64px"></textarea>
             </div>
           </div>
         </div>
@@ -353,6 +358,16 @@
               <button type="button" id="qtyPlus" aria-label="More">+</button>
             </div>
             <p class="hint" id="qtyHint" style="margin-top:8px"></p>
+          </div>
+          <div id="recipientSingleField" class="field hidden">
+            <label>Recipient address</label>
+            <input type="text" id="recipientName" placeholder="Name" style="margin-bottom:8px">
+            <textarea id="recipientAddress" placeholder="Street address&#10;City, State ZIP" style="min-height:64px"></textarea>
+          </div>
+          <div id="recipientListField" class="field hidden">
+            <label>Mailing list <span style="text-transform:none;letter-spacing:0;font-weight:400">(CSV — name, address)</span></label>
+            <input type="file" id="mailingListInput" accept=".csv">
+            <p class="hint" style="margin-top:8px">We'll address each envelope from your list by hand for this order. Automatic per-envelope printing is coming.</p>
           </div>
           <div class="field" style="margin-top:12px"><button class="btn btn-primary" id="orderBtn" style="width:100%">Order these cards →</button></div>
           <p class="hint" id="orderStatus" style="text-align:center"></p>
@@ -492,6 +507,7 @@ function blankFace(){ return { mode:'template', template:'blank', text:'', font:
 const state = {
   size:'5x7', orientation:'portrait', fold:'flat',
   paper:'Ivory', envelope:false, envColor:'Ivory', addressing:false,
+  returnName:'', returnAddress:'', recipientName:'', recipientAddress:'', mailingListFile:null,
   fullBleed:false, qty:25, activeSide:'front', moods:new Set(),
   faces:{ front:blankFace(), inside:blankFace() }
 };
@@ -678,6 +694,10 @@ function refreshAll(){
   $('#fullBleed').checked=state.fullBleed;
   $('#addressingToggle').checked=state.addressing;
   if(!state.envelope) state.addressing=false;
+  $('#returnAddressField').classList.toggle('hidden',!state.addressing);
+  const singleRecipient = (state.qty||1)===1;
+  $('#recipientSingleField').classList.toggle('hidden', !(state.addressing && singleRecipient));
+  $('#recipientListField').classList.toggle('hidden', !(state.addressing && !singleRecipient));
 
   const ink=$('#envInkNote');
   if(state.envelope && ENV_DARK.includes(state.envColor)){ ink.classList.remove('hidden'); ink.innerHTML=`Note: we print CMYK (no white ink), so a dark <strong>${state.envColor}</strong> envelope can't take a printed address legibly. Fine as a color choice — just not for printed-on text.`; }
@@ -730,6 +750,11 @@ $('#sideToggle').addEventListener('click',e=>{const b=e.target.closest('[data-si
 $('#textInput').addEventListener('input',e=>{face().text=e.target.value;renderPreviewCanvas(state.activeSide==='inside'?$('#cvInside'):$('#cvFront'),face(),state.activeSide);});
 $('#fullBleed').addEventListener('change',e=>{state.fullBleed=e.target.checked;refreshAll();});
 $('#addressingToggle').addEventListener('change',e=>{state.addressing=e.target.checked;refreshAll();});
+$('#returnName').addEventListener('input',e=>{state.returnName=e.target.value;});
+$('#returnAddress').addEventListener('input',e=>{state.returnAddress=e.target.value;});
+$('#recipientName').addEventListener('input',e=>{state.recipientName=e.target.value;});
+$('#recipientAddress').addEventListener('input',e=>{state.recipientAddress=e.target.value;});
+$('#mailingListInput').addEventListener('change',e=>{state.mailingListFile=e.target.files[0]||null;});
 $('#bgRemove').addEventListener('change',()=>{applyBg();refreshAll();});
 $('#imgInput').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const img=new Image();img.onload=()=>{const f=face();f.rawImage=img;f.mode='upload';applyBg();refreshAll();};img.src=URL.createObjectURL(file);});
 $('#copyHex').addEventListener('click',()=>{const hex=paperHex().toUpperCase();navigator.clipboard&&navigator.clipboard.writeText(hex);toast('Copied '+hex+' — paste into the Shopify variant swatch');});
@@ -821,6 +846,19 @@ async function orderCards(){
     fileInput.type='file'; fileInput.name='properties[Design File]'; fileInput.style.display='none';
     form.appendChild(fileInput);
     setFileInput(fileInput,blob,name+'.pdf');
+
+    if(state.addressing){
+      const singleRecipient=(state.qty||1)===1;
+      if(state.returnName||state.returnAddress) add('properties[Return Address]',`${state.returnName}\n${state.returnAddress}`.trim());
+      if(singleRecipient){
+        if(state.recipientName||state.recipientAddress) add('properties[Recipient Address]',`${state.recipientName}\n${state.recipientAddress}`.trim());
+      } else if(state.mailingListFile){
+        const csvInput=document.createElement('input');
+        csvInput.type='file'; csvInput.name='properties[Mailing List]'; csvInput.style.display='none';
+        form.appendChild(csvInput);
+        const dt=new DataTransfer(); dt.items.add(state.mailingListFile); csvInput.files=dt.files;
+      }
+    }
     document.body.appendChild(form);
     status.textContent='Sending your design to checkout…';
     form.submit();
