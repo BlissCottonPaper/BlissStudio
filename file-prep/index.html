@@ -218,7 +218,10 @@
       <div class="card-block">
         <h2>Download</h2>
         <div class="field"><label>File name</label><input type="text" id="fileName" placeholder="bliss-file-prep"></div>
-        <div class="field"><button class="btn btn-primary" id="downloadBtn" style="width:100%" disabled>Download PNG</button></div>
+        <div class="field" style="display:flex;gap:10px">
+          <button class="btn btn-primary" id="downloadBtn" style="flex:1" disabled>Download PNG</button>
+          <button class="btn btn-ghost" id="resetBtn" disabled>Reset</button>
+        </div>
       </div>
     </div>
 
@@ -292,9 +295,25 @@ function loadFile(file){
     $('#previewEmpty').style.display='none';
     $('#cv').style.display='block';
     $('#downloadBtn').disabled=false;
+    $('#resetBtn').disabled=false;
     process();
   };
   img.src=URL.createObjectURL(file);
+}
+
+function reset(){
+  rawImage=null;
+  $('#fileInput').value='';
+  $('#rmBg').checked=false; $('#tolField').style.display='none'; $('#tol').value=100; $('#tolOut').textContent='100';
+  $('#flatten').checked=false; $('#threshField').style.display='none'; $('#hardRow').style.display='none';
+  $('#thresh').value=200; $('#threshOut').textContent='200'; $('#hardEdge').checked=true;
+  $('#fileName').value='';
+  $('#cv').style.display='none';
+  $('#cv').getContext('2d').clearRect(0,0,$('#cv').width,$('#cv').height);
+  $('#previewEmpty').style.display='block';
+  $('#specLine').textContent='';
+  $('#downloadBtn').disabled=true;
+  $('#resetBtn').disabled=true;
 }
 
 $('#dropzone').addEventListener('click',()=>$('#fileInput').click());
@@ -319,6 +338,7 @@ $('#downloadBtn').addEventListener('click',()=>{
   document.body.appendChild(a);a.click();a.remove();
   toast('Downloaded');
 });
+$('#resetBtn').addEventListener('click',reset);
 </script>
 </body>
 </html>
