@@ -105,10 +105,9 @@ and are separate from the retail "Set of 10" paper/envelope products, so a
 Card Studio order does not draw down the real paper/envelope stock counts.
 Fine for v1; revisit if/when accurate inventory reconciliation matters.
 
-**Not yet live-tested end-to-end on the real store** — the build is verified
-via headless mocks (correct variant IDs/quantities, real PDF attached, the
-finishing page adds all items and reaches /cart). Marc should run one real
-test order before pointing customers at it.
+**Live-tested end-to-end on the real store (2026-08-03)** — Marc ran a real
+$0 (100%-off coupon) order for 1 Ivory card. Checkout, the design-file
+upload, and the cart all worked correctly.
 
 ## Backlog / polish (added)
 - **SEO** — set title/meta on remaining pages; add descriptive copy/FAQ to tool
