@@ -1,0 +1,31 @@
+<!-- Card Studio — cart-finishing page body. Shopify page: /pages/card-studio-finish
+     Lands here after the design-file item is added via a real form POST (which is
+     the only way to carry a file as a cart line-item property). This page adds the
+     remaining items (paper, envelope, addressing) via /cart/add.js -- same-origin
+     here, so no cross-site cookie issues -- then sends the customer to /cart. -->
+<div id="csf-root" style="max-width:520px;margin:64px auto;padding:0 24px;text-align:center;font-family:'Assistant',system-ui,sans-serif;color:#3a5265;">
+  <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;color:#14283c;font-size:1.8rem;margin:0 0 10px;">Finishing your order…</h1>
+  <p id="csf-msg">Adding the rest of your order to your cart.</p>
+</div>
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var msg = document.getElementById('csf-msg');
+  var items = [];
+  try { items = JSON.parse(params.get('items') || '[]'); } catch (e) {}
+
+  function addOne(it){
+    return fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ id: it.id, quantity: it.quantity }] })
+    }).catch(function(e){ console.error('cart add failed', it, e); });
+  }
+
+  (async function(){
+    for (var i = 0; i < items.length; i++) { await addOne(items[i]); }
+    msg.textContent = 'All set — taking you to your cart…';
+    window.location.href = '/cart';
+  })();
+})();
+</script>

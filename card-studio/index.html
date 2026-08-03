@@ -275,6 +275,10 @@
             <div class="cs-swatches" id="envSwatches"></div>
             <div id="envMatchNote" class="note hidden"></div>
             <div id="envInkNote" class="note hidden"></div>
+            <div class="switch-row" style="border-top:1px solid var(--bliss-border);margin-top:6px">
+              <div class="lbl">Address the envelope for me<small>We print the recipient address on the outer envelope, $2.50 each.</small></div>
+              <label class="switch"><input type="checkbox" id="addressingToggle"><span class="cs-slider"></span></label>
+            </div>
           </div>
         </div>
 
@@ -470,12 +474,24 @@ const INSIDE_TEMPLATES = [
 function tmplSet(side){ return side==='inside'?INSIDE_TEMPLATES:FRONT_TEMPLATES; }
 
 const DPI = 300;
-const WORKER_URL = 'https://bliss-tools.still-sun-d335.workers.dev'; // Card Studio backend (swap if the Worker is named differently)
+const SHOP_ORIGIN = 'https://blisscottonpaper.com';
+
+/* Native-cart checkout: real Shopify products, no backend. Card Studio -> Shopify's
+   own /cart/add (classic form, carries the design file as a line-item property),
+   then a return_to hop back here adds the remaining items via /cart/add.js (same
+   origin at that point) before sending the customer to /cart. */
+const VARIANTS = {
+  paperFlat:   { '5x7':53958937215292, 'A6':53958937248060, 'RSVP':53958937280828 },
+  paperFold:   { '5x7':53958937313596, 'A6':53958937346364, 'RSVP':53958937379132 },
+  print:       { '5x7':53958937411900, 'A6':53958937444668, 'RSVP':53958937477436 },
+  envelope:    { 'A7':53958937510204,  'A6':53958937542972, 'RSVP':53958937575740 },
+  addressing:  53958937608508
+};
 
 function blankFace(){ return { mode:'template', template:'blank', text:'', font:'Cormorant Garamond', image:null, rawImage:null }; }
 const state = {
   size:'5x7', orientation:'portrait', fold:'flat',
-  paper:'Ivory', envelope:false, envColor:'Ivory',
+  paper:'Ivory', envelope:false, envColor:'Ivory', addressing:false,
   fullBleed:false, qty:25, activeSide:'front', moods:new Set(),
   faces:{ front:blankFace(), inside:blankFace() }
 };
@@ -660,6 +676,8 @@ function refreshAll(){
   $$('[data-env]').forEach(c=>c.classList.toggle('sel',(c.dataset.env==='yes')===state.envelope));
   $('#envColorField').classList.toggle('hidden',!state.envelope);
   $('#fullBleed').checked=state.fullBleed;
+  $('#addressingToggle').checked=state.addressing;
+  if(!state.envelope) state.addressing=false;
 
   const ink=$('#envInkNote');
   if(state.envelope && ENV_DARK.includes(state.envColor)){ ink.classList.remove('hidden'); ink.innerHTML=`Note: we print CMYK (no white ink), so a dark <strong>${state.envColor}</strong> envelope can't take a printed address legibly. Fine as a color choice — just not for printed-on text.`; }
@@ -711,6 +729,7 @@ $('#modeTabs').addEventListener('click',e=>{const b=e.target.closest('[data-mode
 $('#sideToggle').addEventListener('click',e=>{const b=e.target.closest('[data-side]');if(b){state.activeSide=b.dataset.side;refreshAll();}});
 $('#textInput').addEventListener('input',e=>{face().text=e.target.value;renderPreviewCanvas(state.activeSide==='inside'?$('#cvInside'):$('#cvFront'),face(),state.activeSide);});
 $('#fullBleed').addEventListener('change',e=>{state.fullBleed=e.target.checked;refreshAll();});
+$('#addressingToggle').addEventListener('change',e=>{state.addressing=e.target.checked;refreshAll();});
 $('#bgRemove').addEventListener('change',()=>{applyBg();refreshAll();});
 $('#imgInput').addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;const img=new Image();img.onload=()=>{const f=face();f.rawImage=img;f.mode='upload';applyBg();refreshAll();};img.src=URL.createObjectURL(file);});
 $('#copyHex').addEventListener('click',()=>{const hex=paperHex().toUpperCase();navigator.clipboard&&navigator.clipboard.writeText(hex);toast('Copied '+hex+' — paste into the Shopify variant swatch');});
@@ -755,25 +774,56 @@ async function exportPDF(){
   pdf.save(name+'.pdf');
   status.textContent='Downloaded '+name+'.pdf';toast('Print-ready PDF downloaded');
 }
-function orderConfig(){
-  return { size:state.size, fold:state.fold, orientation:state.orientation, paperColor:state.paper,
-    sides:printSides(), quantity:state.qty||1,
-    envelope:{ on:state.envelope, color:state.envColor },
-    addressing:{ on:false } };
+/* Native-cart order flow (no backend):
+   1. A real <form> multipart POST to Shopify's own /cart/add carries the
+      PRINTING line item + the design PDF as a file line-item property. This
+      is a full page navigation (required for file-upload properties to work).
+   2. return_to sends the browser back to THIS page with ?continue=1&items=...
+      encoding the remaining cart lines (paper, envelope, addressing).
+   3. On that reload, continuePendingOrder() adds those via /cart/add.js
+      (same-origin now, so no cross-site cookie issues), then redirects to /cart. */
+function envelopeSizeKey(){ return {'5x7':'A7','A6':'A6','RSVP':'RSVP'}[state.size]; }
+function orderLineItems(){
+  const qty=state.qty||1, sides=printSides();
+  const paperMap = state.fold==='folded' ? VARIANTS.paperFold : VARIANTS.paperFlat;
+  const items=[ { id:paperMap[state.size], quantity:qty } ];
+  if(state.envelope){
+    items.push({ id:VARIANTS.envelope[envelopeSizeKey()], quantity:qty });
+    if(state.addressing) items.push({ id:VARIANTS.addressing, quantity:qty });
+  }
+  return { printItem:{ id:VARIANTS.print[state.size], quantity:qty*sides }, restItems:items };
+}
+function setFileInput(input,blob,filename){
+  const file=new File([blob],filename,{type:'application/pdf'});
+  const dt=new DataTransfer(); dt.items.add(file); input.files=dt.files;
 }
 async function orderCards(){
   const btn=$('#orderBtn'), status=$('#orderStatus');
   btn.disabled=true; status.textContent='Preparing your order…';
   try{
     const pdf=await buildPdf();
-    const b64=(pdf.output('datauristring').split(',')[1])||'';
+    const blob=pdf.output('blob');
     const name=slug($('#fileName').value||'bliss-studio-card');
-    const r=await fetch(WORKER_URL+'/order',{ method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ name, pdfBase64:b64, config:orderConfig() }) });
-    const j=await r.json().catch(()=>({ok:false,error:'bad response'}));
-    if(!r.ok || !j.ok) throw new Error(j.error||('HTTP '+r.status));
-    status.textContent='Taking you to checkout…';
-    window.location.href=j.checkoutUrl;
+    const {printItem,restItems}=orderLineItems();
+    const cardSummary=`${SIZES[state.size].label} ${state.fold} ${state.orientation} · ${state.paper}`+(state.envelope?` + ${state.envColor} envelope`:'');
+
+    const returnUrl=new URL(SHOP_ORIGIN+'/pages/card-studio-finish');
+    returnUrl.searchParams.set('items',JSON.stringify(restItems));
+
+    const form=document.createElement('form');
+    form.method='post'; form.enctype='multipart/form-data'; form.action=SHOP_ORIGIN+'/cart/add'; form.style.display='none';
+    const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;form.appendChild(i);};
+    add('id',printItem.id); add('quantity',printItem.quantity);
+    add('properties[Card]',cardSummary);
+    add('properties[Sides]',String(printSides()));
+    add('return_to',returnUrl.pathname+returnUrl.search);
+    const fileInput=document.createElement('input');
+    fileInput.type='file'; fileInput.name='properties[Design File]'; fileInput.style.display='none';
+    form.appendChild(fileInput);
+    setFileInput(fileInput,blob,name+'.pdf');
+    document.body.appendChild(form);
+    status.textContent='Sending your design to checkout…';
+    form.submit();
   }catch(err){
     console.error(err);
     status.textContent='Could not start checkout ('+err.message+'). You can still download the PDF below.';
