@@ -4,6 +4,15 @@ Bliss Studio (`studio.blisscottonpaper.com`) is the home for Bliss's free browse
 tools. This captures the direction discussed; it is a plan, not a commitment to
 dates. Only Card Studio v1 is built today.
 
+**The one canonical Studio hub is the Shopify page** `blisscottonpaper.com/pages/studio`
+(edited via the Admin API, not this repo). `studio.blisscottonpaper.com/` used to
+also serve its own duplicate hub page (`index.html` in this repo) that drifted out
+of sync and confused navigation (logo/nav links bounced back to the stale
+Cloudflare copy instead of the real hub). Fixed: that file is deleted, `/` now
+301-redirects to the Shopify hub (`_redirects`), and every tool's logo/nav links
+point straight at `https://blisscottonpaper.com/pages/studio`. Don't recreate a
+hub page in this repo — edit the Shopify page instead.
+
 ## Vision
 Bliss Studio becomes the single hub for all Bliss tools. The "Tools" area on the
 main `blisscottonpaper.com` site is retired and folded into Studio — Studio is
