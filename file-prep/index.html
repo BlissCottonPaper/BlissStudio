@@ -3,8 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>File Prep · Bliss Studio</title>
-<meta name="description" content="Clean up artwork for print: drop the background to transparent, or flatten to solid black for foil, white ink, and letterpress dies. A free tool from Bliss Cotton Paper + Print.">
+<title>Free Artwork Prep Tool for Foil, Letterpress & Die Cutting | Bliss Cotton Paper</title>
+<meta name="description" content="Prepare artwork for foil stamping, letterpress dies, or white ink printing: remove the background, flatten to solid black, vectorize to SVG, and download print-ready art at up to 1200 DPI. Free browser tool for stationers and designers from Bliss Cotton Paper.">
+<link rel="canonical" href="https://studio.blisscottonpaper.com/file-prep/">
+<meta property="og:title" content="Free Artwork Prep Tool for Foil, Letterpress & Die Cutting | Bliss Cotton Paper">
+<meta property="og:description" content="Prepare artwork for foil stamping, letterpress dies, or white ink printing: remove the background, flatten to solid black, vectorize to SVG, and download print-ready art at up to 1200 DPI. Free browser tool for stationers and designers from Bliss Cotton Paper.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://studio.blisscottonpaper.com/file-prep/">
+<meta property="og:site_name" content="Bliss Cotton Paper">
+<meta property="og:image" content="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/logoWht.png?v=1771450695">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Free Artwork Prep Tool for Foil, Letterpress & Die Cutting | Bliss Cotton Paper">
+<meta name="twitter:description" content="Prepare artwork for foil stamping, letterpress dies, or white ink printing: remove the background, flatten to solid black, vectorize to SVG, and download print-ready art at up to 1200 DPI. Free browser tool for stationers and designers from Bliss Cotton Paper.">
 <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0944/4547/0012/files/logoWht.png?v=1771450695">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,6 +77,7 @@
   .card-block .hint{color:var(--bliss-text-mid);font-size:.9rem;margin:0 0 16px}
   .field{margin:16px 0}
   .field > label{display:block;font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--bliss-text-mid);margin-bottom:8px}
+  .field select{font:inherit;font-size:.95rem;padding:9px 11px;border:1px solid var(--bliss-border);border-radius:9px;color:var(--bliss-text);background:#fff;width:100%}
 
   .dropzone{border:2px dashed var(--bliss-border);border-radius:12px;padding:32px 16px;text-align:center;cursor:pointer;transition:.15s;color:var(--bliss-text-mid)}
   .dropzone:hover,.dropzone.drag{border-color:var(--bliss-navy-mid);background:var(--bliss-warm)}
@@ -107,6 +118,7 @@
   .btn-primary:disabled{background:var(--bliss-border);cursor:not-allowed}
   .btn-ghost{background:transparent;border-color:var(--bliss-border);color:var(--bliss-navy)}
   .btn-ghost:hover{border-color:var(--bliss-navy-mid)}
+  .btn-ghost:disabled{opacity:.5;cursor:not-allowed}
 
   .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--bliss-navy);color:#fff;padding:11px 18px;border-radius:10px;font-size:.9rem;opacity:0;pointer-events:none;transition:.2s;z-index:99}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -169,8 +181,8 @@
 
 <div class="wrap">
   <div class="lede">
-    <h1>File Prep</h1>
-    <p>Clean up artwork before you print or send it out for a die. Drop the background to transparent, or flatten everything to solid black for foil, white ink, or a letterpress die (like Boxcar Press).</p>
+    <h1>File Prep for Foil, Letterpress & Die Cutting</h1>
+    <p>Clean up artwork before you print or send it out for a die. Drop the background to transparent, flatten everything to solid black for foil, white ink, or a letterpress die (like Boxcar Press), and vectorize to SVG when a die maker needs paths instead of pixels.</p>
   </div>
 
   <div class="studio-grid">
@@ -183,6 +195,14 @@
         </div>
         <input type="file" id="fileInput" accept="image/png,image/jpeg,application/pdf" style="display:none">
         <p class="hint" id="pageNote" style="margin:10px 0 0"></p>
+        <div class="field" id="dpiField" style="display:none">
+          <label>PDF render quality</label>
+          <select id="pdfDpi">
+            <option value="300">300 DPI — draft / quick preview</option>
+            <option value="600" selected>600 DPI — recommended for foil &amp; letterpress dies</option>
+            <option value="1200">1200 DPI — fine detail, larger file, slower</option>
+          </select>
+        </div>
       </div>
 
       <div class="card-block">
@@ -213,7 +233,16 @@
           <div class="lbl">Hard edges<small>Recommended for dies — avoids soft, partial-black pixels that can confuse a die cutter.</small></div>
           <label class="switch"><input type="checkbox" id="hardEdge" checked><span class="fp-slider"></span></label>
         </div>
-        <div class="note" id="dieNote">Sending this to a die maker (Boxcar Press or similar)? Flatten to black first, then download — a die is cut from the black shape only, so color and shading don't matter.</div>
+        <div class="note" id="dieNote">Sending this to a die maker (Boxcar Press or similar)? Flatten to black first, then download — a die can be cut from a true 600–1200 DPI bitmap or from vector art. Bold, simple shapes (monograms, gift tags, ex libris marks) trace to clean vector paths below; fine detail is safer left as a high-DPI bitmap.</div>
+      </div>
+
+      <div class="card-block">
+        <h2>Vectorize</h2>
+        <p class="hint">Traces the flattened black shape into SVG paths — useful when a die maker wants vector art instead of a bitmap. Works best on bold, simple shapes: monograms, gift tags, ex libris marks, small icons. Turn on Flatten to Black first.</p>
+        <div class="field" style="display:flex;gap:10px">
+          <button class="btn btn-primary" id="vectorizeBtn" style="flex:1" disabled>Vectorize &amp; Download SVG</button>
+        </div>
+        <p class="hint" id="vectorizeNote" style="margin:8px 0 0">Turn on Flatten to Black to enable vectorizing.</p>
       </div>
 
       <div class="card-block">
@@ -249,6 +278,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/imagetracerjs@1.2.6/imagetracer_v1.2.6.min.js"></script>
 <script>
 "use strict";
 const $=s=>document.querySelector(s);
@@ -256,18 +286,16 @@ const $=s=>document.querySelector(s);
 if (window.pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
-const PDF_RENDER_DPI = 300;
 
-$('#navToggle').addEventListener('click',()=>{const n=$('#siteNav');const open=n.classList.toggle('open');$('#navToggle').setAttribute('aria-expanded',open);});
-
-let rawImage=null;        // original uploaded Image, OR a canvas (rendered PDF page 1)
-let PDF_DOC=null;         // pdf.js document, kept so "download all pages" can re-render every page
+let rawImage=null;
+let PDF_DOC=null;
 let PDF_NUM_PAGES=0;
-let ORIGINAL_TYPE=null;   // 'image/png' | 'image/jpeg' | 'application/pdf' | null
+let ORIGINAL_TYPE=null;
+
+function pdfDpi(){ return +($('#pdfDpi').value || 600); }
 
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 
-/* ---------- image processing ---------- */
 function removeBg(img,tol){
   const c=document.createElement('canvas');c.width=img.naturalWidth||img.width;c.height=img.naturalHeight||img.height;
   const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);
@@ -292,10 +320,9 @@ function flattenToBlack(srcCanvasOrImg,thresh,hard){
   x.putImageData(d,0,0);return c;
 }
 
-/* ---------- PDF page -> canvas at PDF_RENDER_DPI ---------- */
-function renderPageToCanvas(doc,pageNum){
+function renderPageToCanvas(doc,pageNum,dpi){
   return doc.getPage(pageNum).then(function(page){
-    const scale = PDF_RENDER_DPI/72;
+    const scale = dpi/72;
     const viewport = page.getViewport({ scale: scale });
     const c = document.createElement('canvas');
     c.width = Math.ceil(viewport.width);
@@ -320,6 +347,7 @@ function process(){
   cv.getContext('2d').drawImage(out,0,0,w,h);
   $('#specLine').textContent = `${w} × ${h}px`;
   updateJpgAvailability();
+  updateVectorizeAvailability();
 }
 
 function updateJpgAvailability(){
@@ -333,6 +361,15 @@ function updateJpgAvailability(){
     btn.style.display='none';
     note.style.display='none';
   }
+}
+
+function updateVectorizeAvailability(){
+  const btn=$('#vectorizeBtn'), note=$('#vectorizeNote');
+  const eligible = $('#flatten').checked && !!rawImage && !!window.ImageTracer;
+  btn.disabled = !eligible;
+  note.style.display = ($('#flatten').checked && !window.ImageTracer) ? 'block' : ($('#flatten').checked ? 'none' : 'block');
+  if($('#flatten').checked && !window.ImageTracer) note.textContent='Vectorizer failed to load — try refreshing the page.';
+  else if(!$('#flatten').checked) note.textContent='Turn on Flatten to Black to enable vectorizing.';
 }
 
 function activatePreview(){
@@ -351,12 +388,13 @@ function loadFile(file){
 
   if(isPdf){
     if(!window.pdfjsLib || !window.PDFLib){ toast('PDF support failed to load — try a PNG or JPG instead.'); return; }
+    $('#dpiField').style.display='block';
     toast('Rendering PDF…');
     loadPdfDoc(file).then(function(doc){
       PDF_DOC = doc;
       PDF_NUM_PAGES = doc.numPages;
       ORIGINAL_TYPE = 'application/pdf';
-      return renderPageToCanvas(doc,1);
+      return renderPageToCanvas(doc,1,pdfDpi());
     }).then(function(canvas){
       rawImage = canvas;
       activatePreview();
@@ -364,10 +402,11 @@ function loadFile(file){
       if(PDF_NUM_PAGES > 1){
         $('#pageNote').textContent = 'Multi-page PDF — '+PDF_NUM_PAGES+' pages. Previewing page 1; "Download all pages" applies the current settings to every page.';
         $('#downloadAllRow').style.display='block';
-        toast('Previewing page 1 of '+PDF_NUM_PAGES+'.');
+        toast('Previewing page 1 of '+PDF_NUM_PAGES+' at '+pdfDpi()+' DPI.');
       } else {
         $('#pageNote').textContent='';
         $('#downloadAllRow').style.display='none';
+        toast('Rendered at '+pdfDpi()+' DPI.');
       }
     }).catch(function(err){
       toast('Could not read that PDF.');
@@ -380,6 +419,7 @@ function loadFile(file){
   ORIGINAL_TYPE = file.type;
   $('#downloadAllRow').style.display='none';
   $('#pageNote').textContent='';
+  $('#dpiField').style.display='none';
 
   const img=new Image();
   img.onload=()=>{
@@ -406,7 +446,9 @@ function reset(){
   $('#resetBtn').disabled=true;
   $('#downloadAllRow').style.display='none';
   $('#pageNote').textContent='';
+  $('#dpiField').style.display='none';
   updateJpgAvailability();
+  updateVectorizeAvailability();
 }
 
 $('#dropzone').addEventListener('click',()=>$('#fileInput').click());
@@ -414,6 +456,16 @@ $('#fileInput').addEventListener('change',e=>loadFile(e.target.files[0]));
 ['dragover','dragenter'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.add('drag');}));
 ['dragleave','drop'].forEach(ev=>$('#dropzone').addEventListener(ev,e=>{e.preventDefault();$('#dropzone').classList.remove('drag');}));
 $('#dropzone').addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)loadFile(f);});
+
+$('#pdfDpi').addEventListener('change',function(){
+  if(!PDF_DOC) return;
+  toast('Re-rendering at '+pdfDpi()+' DPI…');
+  renderPageToCanvas(PDF_DOC,1,pdfDpi()).then(function(canvas){
+    rawImage=canvas;
+    process();
+    toast('Rendered at '+pdfDpi()+' DPI.');
+  });
+});
 
 $('#rmBg').addEventListener('change',e=>{$('#tolField').style.display=e.target.checked?'block':'none';process();});
 $('#tol').addEventListener('input',e=>{$('#tolOut').textContent=e.target.value;process();});
@@ -445,6 +497,40 @@ $('#downloadJpgBtn').addEventListener('click',()=>{
 
 $('#resetBtn').addEventListener('click',reset);
 
+/* ---------- Vectorize (flattened black shape -> SVG) ---------- */
+$('#vectorizeBtn').addEventListener('click', function(){
+  if(!rawImage || !$('#flatten').checked || !window.ImageTracer) return;
+  const btn=this; const origLabel=btn.textContent;
+  btn.disabled=true; btn.textContent='Tracing…';
+  try{
+    const cv=$('#cv');
+    const ctx=cv.getContext('2d');
+    const imgData=ctx.getImageData(0,0,cv.width,cv.height);
+    const options={
+      ltres:1, qtres:1, pathomit:8,
+      colorsampling:0, numberofcolors:2,
+      mincolorratio:0, colorquantcycles:1,
+      strokewidth:0, linefilter:true,
+      scale:1, roundcoords:1,
+      viewbox:true, desc:false
+    };
+    const svgString = ImageTracer.imagedataToSVG(imgData, options);
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=slug($('#fileName').value)+'.svg';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+    toast('Vectorized and downloaded SVG.');
+  }catch(err){
+    console.error(err);
+    toast('Could not vectorize this image.');
+  }finally{
+    btn.disabled=false; btn.textContent=origLabel;
+    updateVectorizeAvailability();
+  }
+});
+
 /* ---------- Batch: process every page, reassemble into one PDF ---------- */
 function canvasToPngBytes(canvas){
   return new Promise(function(resolve,reject){
@@ -458,6 +544,7 @@ function canvasToPngBytes(canvas){
 function processAllPagesToPdf(){
   if(!PDF_DOC || PDF_NUM_PAGES<1) return;
   const n=PDF_NUM_PAGES;
+  const dpi=pdfDpi();
   const rmBgOn=$('#rmBg').checked, tol=+$('#tol').value;
   const flattenOn=$('#flatten').checked, thresh=+$('#thresh').value, hard=$('#hardEdge').checked;
   const btn=$('#downloadAllBtn');
@@ -471,12 +558,12 @@ function processAllPagesToPdf(){
     (function(pageNum){
       chain = chain.then(function(){
         btn.textContent='Processing page '+pageNum+' of '+n+'…';
-        return renderPageToCanvas(PDF_DOC,pageNum);
+        return renderPageToCanvas(PDF_DOC,pageNum,dpi);
       }).then(function(canvas){
         let src = rmBgOn ? removeBg(canvas,tol) : canvas;
         let out = flattenOn ? flattenToBlack(src,thresh,hard) : src;
-        const wPt = out.width * 72 / PDF_RENDER_DPI;
-        const hPt = out.height * 72 / PDF_RENDER_DPI;
+        const wPt = out.width * 72 / dpi;
+        const hPt = out.height * 72 / dpi;
         return canvasToPngBytes(out).then(function(bytes){
           pages.push({ wPt:wPt, hPt:hPt, bytes:bytes });
         });
@@ -503,7 +590,7 @@ function processAllPagesToPdf(){
     a.download=slug($('#fileName').value)+'-all-pages.pdf';
     document.body.appendChild(a);a.click();
     setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
-    toast('Downloaded all '+n+' pages as one PDF.');
+    toast('Downloaded all '+n+' pages as one PDF at '+dpi+' DPI.');
   }).catch(function(err){
     console.error(err);
     toast('Could not build the PDF — see console.');
@@ -514,6 +601,8 @@ function processAllPagesToPdf(){
 }
 
 $('#downloadAllBtn').addEventListener('click', processAllPagesToPdf);
+
+updateVectorizeAvailability();
 </script>
 </body>
 </html>
