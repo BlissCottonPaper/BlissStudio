@@ -367,9 +367,15 @@ function updateVectorizeAvailability(){
   const btn=$('#vectorizeBtn'), note=$('#vectorizeNote');
   const eligible = $('#flatten').checked && !!rawImage && !!window.ImageTracer;
   btn.disabled = !eligible;
-  note.style.display = ($('#flatten').checked && !window.ImageTracer) ? 'block' : ($('#flatten').checked ? 'none' : 'block');
-  if($('#flatten').checked && !window.ImageTracer) note.textContent='Vectorizer failed to load — try refreshing the page.';
-  else if(!$('#flatten').checked) note.textContent='Turn on Flatten to Black to enable vectorizing.';
+  if($('#flatten').checked && !window.ImageTracer){
+    note.style.display='block';
+    note.textContent='Vectorizer failed to load — try refreshing the page.';
+  } else if(!$('#flatten').checked){
+    note.style.display='block';
+    note.textContent='Turn on Flatten to Black to enable vectorizing.';
+  } else {
+    note.style.display='none';
+  }
 }
 
 function activatePreview(){
@@ -497,15 +503,26 @@ $('#downloadJpgBtn').addEventListener('click',()=>{
 
 $('#resetBtn').addEventListener('click',reset);
 
-/* ---------- Vectorize (flattened black shape -> SVG) ---------- */
+/* ---------- Vectorize (flattened black shape -> SVG) ----------
+   IMPORTANT: composite onto white before tracing. flattenToBlack() sets
+   RGB to (0,0,0) for every pixel and only alpha distinguishes shape from
+   background — the tracer's color quantizer doesn't factor in alpha, so
+   feeding it raw alpha-only shape data traces one solid black rectangle.
+   Compositing onto opaque white first gives it real black-vs-white contrast. */
 $('#vectorizeBtn').addEventListener('click', function(){
   if(!rawImage || !$('#flatten').checked || !window.ImageTracer) return;
   const btn=this; const origLabel=btn.textContent;
   btn.disabled=true; btn.textContent='Tracing…';
   try{
     const cv=$('#cv');
-    const ctx=cv.getContext('2d');
-    const imgData=ctx.getImageData(0,0,cv.width,cv.height);
+    const flat=document.createElement('canvas');
+    flat.width=cv.width; flat.height=cv.height;
+    const fctx=flat.getContext('2d');
+    fctx.fillStyle='#ffffff';
+    fctx.fillRect(0,0,flat.width,flat.height);
+    fctx.drawImage(cv,0,0);
+    const imgData=fctx.getImageData(0,0,flat.width,flat.height);
+
     const options={
       ltres:1, qtres:1, pathomit:8,
       colorsampling:0, numberofcolors:2,
