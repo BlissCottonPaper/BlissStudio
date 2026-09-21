@@ -177,11 +177,12 @@
     <div class="controls">
       <div class="card-block">
         <h2>Upload artwork</h2>
-        <p class="hint">PNG, JPG, or PDF. For a die, start with the highest-resolution, highest-contrast version you have — a vector PDF is ideal. PDFs render at 300 DPI; only the first page is used.</p>
+        <p class="hint">PNG, JPG, or PDF. For a die, start with the highest-resolution, highest-contrast version you have — a vector PDF is ideal. Multi-page PDFs preview page 1; the same settings apply to every page when you download all.</p>
         <div class="dropzone" id="dropzone">
           <div><strong>Click to upload</strong> or drag a file here</div>
         </div>
         <input type="file" id="fileInput" accept="image/png,image/jpeg,application/pdf" style="display:none">
+        <p class="hint" id="pageNote" style="margin:10px 0 0"></p>
       </div>
 
       <div class="card-block">
@@ -220,7 +221,12 @@
         <div class="field"><label>File name</label><input type="text" id="fileName" placeholder="bliss-file-prep"></div>
         <div class="field" style="display:flex;gap:10px">
           <button class="btn btn-primary" id="downloadBtn" style="flex:1" disabled>Download PNG</button>
+          <button class="btn btn-ghost" id="downloadJpgBtn" style="flex:1;display:none" disabled>Download JPG</button>
           <button class="btn btn-ghost" id="resetBtn" disabled>Reset</button>
+        </div>
+        <p class="hint" id="jpgNote" style="margin:8px 0 0;display:none">JPG can't hold transparency — turn off Remove Background to enable a JPG download.</p>
+        <div class="field" id="downloadAllRow" style="display:none">
+          <button class="btn btn-primary" id="downloadAllBtn" style="width:100%">Download all pages as PDF</button>
         </div>
       </div>
     </div>
@@ -241,6 +247,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 "use strict";
@@ -253,7 +260,11 @@ const PDF_RENDER_DPI = 300;
 
 $('#navToggle').addEventListener('click',()=>{const n=$('#siteNav');const open=n.classList.toggle('open');$('#navToggle').setAttribute('aria-expanded',open);});
 
-let rawImage=null; // original uploaded Image, OR a canvas (rendered PDF page)
+let rawImage=null;        // original uploaded Image, OR a canvas (rendered PDF page 1)
+let PDF_DOC=null;         // pdf.js document, kept so "download all pages" can re-render every page
+let PDF_NUM_PAGES=0;
+let ORIGINAL_TYPE=null;   // 'image/png' | 'image/jpeg' | 'application/pdf' | null
+
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200);}
 
 /* ---------- image processing ---------- */
@@ -281,25 +292,22 @@ function flattenToBlack(srcCanvasOrImg,thresh,hard){
   x.putImageData(d,0,0);return c;
 }
 
-/* ---------- PDF -> canvas (page 1, rasterized at PDF_RENDER_DPI) ---------- */
-function renderPdfPageToCanvas(file){
-  return file.arrayBuffer().then(function(ab){
-    return pdfjsLib.getDocument({ data: ab }).promise;
-  }).then(function(doc){
-    return doc.getPage(1).then(function(page){
-      const scale = PDF_RENDER_DPI / 72;
-      const viewport = page.getViewport({ scale: scale });
-      const c = document.createElement('canvas');
-      c.width = Math.ceil(viewport.width);
-      c.height = Math.ceil(viewport.height);
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, c.width, c.height);
-      return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function(){
-        return { canvas: c, numPages: doc.numPages };
-      });
-    });
+/* ---------- PDF page -> canvas at PDF_RENDER_DPI ---------- */
+function renderPageToCanvas(doc,pageNum){
+  return doc.getPage(pageNum).then(function(page){
+    const scale = PDF_RENDER_DPI/72;
+    const viewport = page.getViewport({ scale: scale });
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(viewport.width);
+    c.height = Math.ceil(viewport.height);
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,c.width,c.height);
+    return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function(){ return c; });
   });
+}
+function loadPdfDoc(file){
+  return file.arrayBuffer().then(function(ab){ return pdfjsLib.getDocument({ data: ab }).promise; });
 }
 
 function process(){
@@ -311,6 +319,20 @@ function process(){
   cv.getContext('2d').clearRect(0,0,w,h);
   cv.getContext('2d').drawImage(out,0,0,w,h);
   $('#specLine').textContent = `${w} × ${h}px`;
+  updateJpgAvailability();
+}
+
+function updateJpgAvailability(){
+  const btn=$('#downloadJpgBtn'), note=$('#jpgNote');
+  const eligible = ORIGINAL_TYPE==='image/jpeg' && !$('#rmBg').checked;
+  if(ORIGINAL_TYPE==='image/jpeg'){
+    btn.style.display='inline-block';
+    note.style.display = eligible ? 'none' : 'block';
+    btn.disabled = !eligible || !rawImage;
+  } else {
+    btn.style.display='none';
+    note.style.display='none';
+  }
 }
 
 function activatePreview(){
@@ -328,19 +350,36 @@ function loadFile(file){
   if(!isPdf && !isImg){ toast('Please upload a PNG, JPG, or PDF.'); return; }
 
   if(isPdf){
-    if(!window.pdfjsLib){ toast('PDF support failed to load — try a PNG or JPG instead.'); return; }
+    if(!window.pdfjsLib || !window.PDFLib){ toast('PDF support failed to load — try a PNG or JPG instead.'); return; }
     toast('Rendering PDF…');
-    renderPdfPageToCanvas(file).then(function(result){
-      rawImage = result.canvas;
+    loadPdfDoc(file).then(function(doc){
+      PDF_DOC = doc;
+      PDF_NUM_PAGES = doc.numPages;
+      ORIGINAL_TYPE = 'application/pdf';
+      return renderPageToCanvas(doc,1);
+    }).then(function(canvas){
+      rawImage = canvas;
       activatePreview();
       process();
-      if(result.numPages > 1) toast('Using page 1 of '+result.numPages+' — other pages are ignored.');
+      if(PDF_NUM_PAGES > 1){
+        $('#pageNote').textContent = 'Multi-page PDF — '+PDF_NUM_PAGES+' pages. Previewing page 1; "Download all pages" applies the current settings to every page.';
+        $('#downloadAllRow').style.display='block';
+        toast('Previewing page 1 of '+PDF_NUM_PAGES+'.');
+      } else {
+        $('#pageNote').textContent='';
+        $('#downloadAllRow').style.display='none';
+      }
     }).catch(function(err){
       toast('Could not read that PDF.');
       console.error(err);
     });
     return;
   }
+
+  PDF_DOC=null; PDF_NUM_PAGES=0;
+  ORIGINAL_TYPE = file.type;
+  $('#downloadAllRow').style.display='none';
+  $('#pageNote').textContent='';
 
   const img=new Image();
   img.onload=()=>{
@@ -353,6 +392,7 @@ function loadFile(file){
 
 function reset(){
   rawImage=null;
+  PDF_DOC=null; PDF_NUM_PAGES=0; ORIGINAL_TYPE=null;
   $('#fileInput').value='';
   $('#rmBg').checked=false; $('#tolField').style.display='none'; $('#tol').value=100; $('#tolOut').textContent='100';
   $('#flatten').checked=false; $('#threshField').style.display='none'; $('#hardRow').style.display='none';
@@ -364,6 +404,9 @@ function reset(){
   $('#specLine').textContent='';
   $('#downloadBtn').disabled=true;
   $('#resetBtn').disabled=true;
+  $('#downloadAllRow').style.display='none';
+  $('#pageNote').textContent='';
+  updateJpgAvailability();
 }
 
 $('#dropzone').addEventListener('click',()=>$('#fileInput').click());
@@ -379,6 +422,7 @@ $('#thresh').addEventListener('input',e=>{$('#threshOut').textContent=e.target.v
 $('#hardEdge').addEventListener('change',process);
 
 function slug(s){return (s||'bliss-file-prep').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'bliss-file-prep';}
+
 $('#downloadBtn').addEventListener('click',()=>{
   if(!rawImage) return;
   const cv=$('#cv');
@@ -388,7 +432,88 @@ $('#downloadBtn').addEventListener('click',()=>{
   document.body.appendChild(a);a.click();a.remove();
   toast('Downloaded');
 });
+
+$('#downloadJpgBtn').addEventListener('click',()=>{
+  if(!rawImage || $('#downloadJpgBtn').disabled) return;
+  const cv=$('#cv');
+  const a=document.createElement('a');
+  a.href=cv.toDataURL('image/jpeg',0.92);
+  a.download=slug($('#fileName').value)+'.jpg';
+  document.body.appendChild(a);a.click();a.remove();
+  toast('Downloaded');
+});
+
 $('#resetBtn').addEventListener('click',reset);
+
+/* ---------- Batch: process every page, reassemble into one PDF ---------- */
+function canvasToPngBytes(canvas){
+  return new Promise(function(resolve,reject){
+    canvas.toBlob(function(blob){
+      if(!blob){ reject(new Error('toBlob failed')); return; }
+      blob.arrayBuffer().then(function(ab){ resolve(new Uint8Array(ab)); }).catch(reject);
+    },'image/png');
+  });
+}
+
+function processAllPagesToPdf(){
+  if(!PDF_DOC || PDF_NUM_PAGES<1) return;
+  const n=PDF_NUM_PAGES;
+  const rmBgOn=$('#rmBg').checked, tol=+$('#tol').value;
+  const flattenOn=$('#flatten').checked, thresh=+$('#thresh').value, hard=$('#hardEdge').checked;
+  const btn=$('#downloadAllBtn');
+  const origLabel=btn.textContent;
+  btn.disabled=true;
+  if(n>40) toast('Large PDF — this may take a little while.');
+
+  const pages=[];
+  let chain=Promise.resolve();
+  for(let i=1;i<=n;i++){
+    (function(pageNum){
+      chain = chain.then(function(){
+        btn.textContent='Processing page '+pageNum+' of '+n+'…';
+        return renderPageToCanvas(PDF_DOC,pageNum);
+      }).then(function(canvas){
+        let src = rmBgOn ? removeBg(canvas,tol) : canvas;
+        let out = flattenOn ? flattenToBlack(src,thresh,hard) : src;
+        const wPt = out.width * 72 / PDF_RENDER_DPI;
+        const hPt = out.height * 72 / PDF_RENDER_DPI;
+        return canvasToPngBytes(out).then(function(bytes){
+          pages.push({ wPt:wPt, hPt:hPt, bytes:bytes });
+        });
+      });
+    })(i);
+  }
+
+  chain.then(function(){
+    btn.textContent='Building PDF…';
+    return PDFLib.PDFDocument.create();
+  }).then(function(outDoc){
+    return pages.reduce(function(p,pg){
+      return p.then(function(){
+        return outDoc.embedPng(pg.bytes).then(function(embedded){
+          const page = outDoc.addPage([pg.wPt, pg.hPt]);
+          page.drawImage(embedded, { x:0, y:0, width:pg.wPt, height:pg.hPt });
+        });
+      });
+    }, Promise.resolve()).then(function(){ return outDoc.save(); });
+  }).then(function(bytes){
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=slug($('#fileName').value)+'-all-pages.pdf';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+    toast('Downloaded all '+n+' pages as one PDF.');
+  }).catch(function(err){
+    console.error(err);
+    toast('Could not build the PDF — see console.');
+  }).then(function(){
+    btn.disabled=false;
+    btn.textContent=origLabel;
+  });
+}
+
+$('#downloadAllBtn').addEventListener('click', processAllPagesToPdf);
 </script>
 </body>
 </html>
